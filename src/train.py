@@ -11,20 +11,30 @@ from torch.utils.data import Dataset, DataLoader
 import argparse
 from .utils.loveda_dataset import LoveDALoader
 from torchmetrics import JaccardIndex
+import importlib.util
 
 import satlaspretrain_models
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="loveda/loveda.py")
-argparser.add_argument("--run_name_prefix", type=str, default="")
 
 args = argparser.parse_args()
 
-TRAIN_DATA_CONFIG = args.config_file["data"]["train"]["params"]
-VAL_DATA_CONFIG = args.config_file["data"]["test"]["params"]
-OPTIMIZER = args.config_file["optimizer"]
-LEARNING_RATE = args.config_file["learning_rate"]
-NUM_EPOCHS = args.config_file["train"]["num_epochs"]
+def load_config(config_path):
+    """Dynamically load a Python module from a given file path."""
+    spec = importlib.util.spec_from_file_location("config_module", config_path)
+    config_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config_module)
+    return config_module
+
+# Load the config dynamically
+config = load_config(args.config)
+
+TRAIN_DATA_CONFIG = config.data["train"]["params"]
+VAL_DATA_CONFIG = config.data["test"]["params"]
+OPTIMIZER = config.optimizer
+LEARNING_RATE = config.learning_rate
+NUM_EPOCHS = config.train["num_epochs"]
 
 # Experiment arguments.
 device = torch.device('cpu')

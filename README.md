@@ -2,22 +2,7 @@
 
 ## Description
 
-Repository template that focuses on simplicity and ease of use. 
-
-This is ideal for quick projects or code publication.
-
-The purpose of this template is to help with code quality, structure and 
-reproducibility.
-
-This template is not intended to be used as is for libraries or applications that will
-be maintained over time, as several things are missing from it, like change logs, 
-advanced tools and coding standards (though it can be expanded for such uses).
-
-This template creates a python package, contained in [src/](src/), that will
-contain your different modules.
-
-For more information about python packages and modules, 
-[Python Modules and Packages – An Introduction](https://realpython.com/python-modules-packages/).
+Final class project Rsponsible AI course.
 
 ## Initialization
 
