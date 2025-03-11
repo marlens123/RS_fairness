@@ -111,8 +111,10 @@ class LoveDALoader(DataLoader, ConfigurableMixin):
             else:
                 sampler = val_sampler
         else:
-            sampler = distributed.StepDistributedSampler(dataset) if self.config.training else SequentialSampler(
-                dataset)
+            if distributed.is_available() and distributed.is_initialized():
+                sampler = distributed.StepDistributedSampler(dataset)
+            else:
+                sampler = SequentialSampler(dataset)  # Use normal sampler if not distributed
 
         super(LoveDALoader, self).__init__(dataset,
                                        self.config.batch_size,
