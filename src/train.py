@@ -28,7 +28,7 @@ def load_config(config_path):
     return config_module
 
 # Load the config dynamically
-config = load_config(args.config)
+config = load_config(args.config_file)
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
 VAL_DATA_CONFIG = config.data["test"]["params"]
