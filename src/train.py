@@ -60,8 +60,10 @@ for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
 
     for data, target in train_dataloader:
-        data = data.to(device)
-        target = target['cls'].to(device)
+        valid_indices = target['cls'] != -1
+        data = data[valid_indices].to(device)
+        target = target['cls'][valid_indices].to(device)
+        
         # loss is going to be cross entropy loss per default
         output, loss = model(data, target)
         print("Train Loss = ", loss)
