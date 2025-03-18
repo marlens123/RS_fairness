@@ -16,7 +16,7 @@ import importlib.util
 import satlaspretrain_models
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--config_file", type=str, default="loveda/loveda.py")
+argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
 
 args = argparser.parse_args()
 
