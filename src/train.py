@@ -43,8 +43,8 @@ val_step = 1  # evaluate every val_step epochs
 save_path = 'weights/'  # where to save model weights
 os.makedirs(save_path, exist_ok=True)
 
-train_dataloader = LoveDALoader(**TRAIN_DATA_CONFIG)
-val_dataloader = LoveDALoader(**VAL_DATA_CONFIG)
+train_dataloader = LoveDALoader(TRAIN_DATA_CONFIG)
+val_dataloader = LoveDALoader(VAL_DATA_CONFIG)
 
 # Initialize a pretrained model, using the SatlasPretrain single-image Swin-v2-Base Sentinel-2 image model weights
 # with a segmentation head with num_categories=7, since LoveDA has 7 classes.
@@ -60,6 +60,8 @@ for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
 
     for data, target in train_dataloader:
+        data = data.to(device)
+        target = target['cls'].to(device)
         # loss is going to be cross entropy loss per default
         output, loss = model(data, target)
         print("Train Loss = ", loss)
