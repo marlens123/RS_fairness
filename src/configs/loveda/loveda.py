@@ -39,12 +39,12 @@ data = dict(
         type='LoveDALoader',
         params=dict(
             image_dir=[
-                './loveda/Val/Urban/images_png/',
-                './loveda/Val/Rural/images_png/',
+                'src/data/loveda/Val/Urban/images_png/',
+                'src/data/loveda/Val/Rural/images_png/',
             ],
             mask_dir=[
-                './loveda/Val/Urban/masks_png/',
-                './loveda/Val/Rural/masks_png/',
+                'src/data/loveda/Val/Urban/masks_png/',
+                'src/data/loveda/Val/Rural/masks_png/',
             ],
             transforms=Compose([
                 Normalize(mean=(123.675, 116.28, 103.53),
