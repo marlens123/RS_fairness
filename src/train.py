@@ -61,7 +61,7 @@ for epoch in range(NUM_EPOCHS):
 
     for data, target in train_dataloader:
         valid_indices = target['cls'] != -1
-        data = data[valid_indices.unsqueeze(1)].to(device)
+        data = (data * valid_indices.unsqueeze(1)).to(device)
         target = target['cls'][valid_indices].to(device)
 
         # loss is going to be cross entropy loss per default
