@@ -7,12 +7,12 @@ data = dict(
         type='LoveDALoader',
         params=dict(
             image_dir=[
-                './loveda/Train/Urban/images_png/',
-                './loveda/Train/Rural/images_png/',
+                'src/data/loveda/Train/Urban/images_png/',
+                'src/data/loveda/Train/Rural/images_png/',
             ],
             mask_dir=[
-                './loveda/Train/Urban/masks_png/',
-                './loveda/Train/Rural/masks_png/',
+                'src/data/loveda/Train/Urban/masks_png/',
+                'src/data/loveda/Train/Rural/masks_png/',
             ],
             
             transforms=Compose([
