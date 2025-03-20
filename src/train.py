@@ -70,13 +70,13 @@ print("Valid data = ", valid)
 for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
 
+    valid_batches = 0
+
     for data, target in train_dataloader:
         if target['cls'] == -1:
             continue
 
-        valid_indices = target['cls'] != -1
-        data = (data * valid_indices.unsqueeze(1)).to(device)
-        target = target['cls'][valid_indices].to(device)
+        valid_batches += 1
 
         # loss is going to be cross entropy loss per default
         output, loss = model(data, target)
@@ -86,6 +86,8 @@ for epoch in range(NUM_EPOCHS):
         optimizer.step()
         optimizer.zero_grad()
         break
+
+    print(f"Epoch {epoch}, valid batches: {valid_batches}")
 
     # Validation.
     if epoch % val_step == 0:
