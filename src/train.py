@@ -96,7 +96,6 @@ for epoch in range(NUM_EPOCHS):
         for val_data, val_target in val_dataloader:
             if (target['cls'] == -1).any():
                 continue
-            val_data = val_data['cls'].to(device)
             val_target = val_target['cls'].to(device)
 
             val_output, val_loss = model(val_data, val_target)
