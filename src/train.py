@@ -79,7 +79,7 @@ for epoch in range(NUM_EPOCHS):
         valid_batches += 1
 
         # loss is going to be cross entropy loss per default
-        output, loss = model(data, target)
+        output, loss = model(data, target['cls'])
         print("Train Loss = ", loss)
 
         loss.backward()
