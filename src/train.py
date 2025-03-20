@@ -73,7 +73,7 @@ for epoch in range(NUM_EPOCHS):
     valid_batches = 0
 
     for data, target in train_dataloader:
-        if target['cls'].any() == -1:
+        if (target['cls'] == -1).any():
             continue
 
         valid_batches += 1
@@ -94,6 +94,8 @@ for epoch in range(NUM_EPOCHS):
         model.eval()
 
         for val_data, val_target in val_dataloader:
+            if (target['cls'] == -1).any():
+                continue
             val_data = val_data.to(device)
             val_target = val_target.to(device)
 
