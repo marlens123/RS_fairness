@@ -55,20 +55,25 @@ model = model.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
 
-valid = []
-invalid = []
+valid = 0
+invalid = 0
 for data, target in train_dataloader:
-    invalid.append(target['cls'] == -1)
-    valid.append(target['cls'] != -1)
+    if target['cls'] == -1:
+        invalid += 1
+    else:
+        valid += 1
 
-print("Invalid data = ", np.mean(invalid))
-print("Valid data = ", np.mean(valid))
+print("Invalid data = ", invalid)
+print("Valid data = ", valid)
 
 # Training loop.
 for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
 
     for data, target in train_dataloader:
+        if target['cls'] == -1:
+            continue
+
         valid_indices = target['cls'] != -1
         data = (data * valid_indices.unsqueeze(1)).to(device)
         target = target['cls'][valid_indices].to(device)
