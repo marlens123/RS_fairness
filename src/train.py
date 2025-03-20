@@ -61,8 +61,8 @@ for data, target in train_dataloader:
     invalid.append(target['cls'] == -1)
     valid.append(target['cls'] != -1)
 
-print("Invalid data = ", sum(invalid))
-print("Valid data = ", sum(valid))
+print("Invalid data = ", np.mean(invalid))
+print("Valid data = ", np.mean(valid))
 
 # Training loop.
 for epoch in range(NUM_EPOCHS):
