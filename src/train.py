@@ -55,6 +55,12 @@ model = model.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
 
+invalid = []
+for data, target in train_dataloader:
+    invalid.append(target['cls'] == -1)
+
+print("Invalid data = ", sum(invalid))
+
 # Training loop.
 for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
