@@ -73,7 +73,7 @@ for epoch in range(NUM_EPOCHS):
     valid_batches = 0
 
     for data, target in train_dataloader:
-        if target['cls'] == -1:
+        if target['cls'].any() == -1:
             continue
 
         valid_batches += 1
