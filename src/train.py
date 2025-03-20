@@ -58,7 +58,7 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_de
 valid = 0
 invalid = 0
 for data, target in train_dataloader:
-    if target['cls'] == -1:
+    if target['cls'].any() == -1:
         invalid += 1
     else:
         valid += 1
