@@ -14,7 +14,9 @@ from torchmetrics import JaccardIndex
 import importlib.util
 import wandb
 
-from .satlaspretrain_models import satlaspretrain_models
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "satlaspretrain_models")))
+from satlaspretrain_models import satlaspretrain_models
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
