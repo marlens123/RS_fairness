@@ -12,11 +12,14 @@ import argparse
 from .utils.loveda_dataset import LoveDALoader
 from torchmetrics import JaccardIndex
 import importlib.util
+import wandb
 
 from .satlaspretrain_models import satlaspretrain_models
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
+argparser.add_argument("--disable_wandb", action="store_true", help="Disable wandb for logging")
+argparser.add_argument("--run_name", type=str, default="loveda_test")
 
 args = argparser.parse_args()
 
@@ -29,6 +32,15 @@ def load_config(config_path):
 
 # Load the config dynamically
 config = load_config(args.config_file)
+
+if not args.disable_wandb:
+    wandb.login()
+    wandb.init(
+        entity='sea-ice',
+        project='rs_fairness',
+        name=args.run_name,
+    )
+    wandb.config.update(config)
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
 VAL_DATA_CONFIG = config.data["test"]["params"]
@@ -55,6 +67,10 @@ model = model.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
 
+
+####################################
+# Remove this block later, only for testing
+####################################
 valid = 0
 invalid = 0
 for data, target in train_dataloader:
@@ -65,47 +81,58 @@ for data, target in train_dataloader:
 
 print("Invalid data = ", invalid)
 print("Valid data = ", valid)
+####################################
+# End of block
+####################################
+
 
 # Training loop.
 for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
 
-    valid_batches = 0
+    train_loss = 0
 
     for data, target in train_dataloader:
-        if (target['cls'] == -1).any():
-            continue
-
-        valid_batches += 1
-
-        # loss is going to be cross entropy loss per default
+        # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
         output, loss = model(data, target['cls'])
         print("Train Loss = ", loss)
 
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-        break
+        train_loss += loss.item()
 
-    print(f"Epoch {epoch}, valid batches: {valid_batches}")
+    if not args.disable_wandb:
+        wandb.log({"epoch": epoch, "train_loss": train_loss/len(train_dataloader)})
 
     # Validation.
     if epoch % val_step == 0:
         model.eval()
 
+        val_loss = 0
+        jac_m = 0
+        mean_iou = 0
+
         for val_data, val_target in val_dataloader:
-            if (target['cls'] == -1).any():
-                continue
             val_target = val_target['cls'].to(device)
+            val_output, loss = model(val_data, val_target)
 
-            val_output, val_loss = model(val_data, val_target)
+            val_loss += loss.item()
 
+            ####################################################################################
+            # Only for testing, remove later
+            ####################################################################################
             jaccard = JaccardIndex(
                 task="multiclass", num_classes=TRAIN_DATA_CONFIG["num_classes"], average="macro"
             ).to(device)
-            jac_m = jaccard(val_output, val_target.squeeze(1))
+            mean_jaccard = jaccard(val_output, val_target.squeeze(1))
 
-            print("Validation mean IoU = ", jac_m)
+            jac_m += mean_jaccard.item()
+
+            print("Validation mean IoU = ", mean_jaccard.item())
+            ####################################################################################
+            # End of testing block
+            ####################################################################################
 
             # Comparison IoU computation
             val_labels = torch.argmax(val_output, dim=1)  # Shape: [batch_size, H, W]
@@ -116,9 +143,16 @@ for epoch in range(NUM_EPOCHS):
                 union = ((val_labels == cls) | (val_target == cls)).sum()
                 if union > 0:
                     iou_per_class.append((inter / union).item())
-            mean_iou = np.mean(iou_per_class) if iou_per_class else 0
+            iou_mean = np.mean(iou_per_class) if iou_per_class else 0
 
-            print("Compared validation mean IoU = ", mean_iou)
+            mean_iou += iou_mean
+
+            print("Compared validation mean IoU = ", iou_mean)
+
+        if not args.disable_wandb:
+            wandb.log({"epoch": epoch, "val_loss": val_loss/len(val_dataloader)})
+            wandb.log({"epoch": epoch, "val_jac": jac_m /len(val_dataloader)})
+            wandb.log({"epoch": epoch, "val_miou": mean_iou / len(val_dataloader)})
 
         # Save the model checkpoint at the end of each epoch.
         torch.save(model.state_dict(), save_path + str(epoch) + '_model_weights.pth')
