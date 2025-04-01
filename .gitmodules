@@ -1,0 +1,3 @@
+[submodule "src/satlaspretrain_models"]
+	path = src/satlaspretrain_models
+	url = https://github.com/marlens123/satlaspretrain_models.git

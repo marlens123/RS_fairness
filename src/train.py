@@ -13,7 +13,7 @@ from .utils.loveda_dataset import LoveDALoader
 from torchmetrics import JaccardIndex
 import importlib.util
 
-import satlaspretrain_models
+from .satlaspretrain_models import satlaspretrain_models
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
