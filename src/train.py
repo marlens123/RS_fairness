@@ -15,8 +15,8 @@ import importlib.util
 import wandb
 
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "satlaspretrain_models")))
-from satlaspretrain_models import satlaspretrain_models
+from .satlaspretrain_models.satlaspretrain_models.model import Weights, Model
+from .satlaspretrain_models.satlaspretrain_models.utils import Head, Backbone
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
@@ -62,8 +62,8 @@ val_dataloader = LoveDALoader(VAL_DATA_CONFIG)
 
 # Initialize a pretrained model, using the SatlasPretrain single-image Swin-v2-Base Sentinel-2 image model weights
 # with a segmentation head with num_categories=7, since LoveDA has 7 classes.
-weights_manager = satlaspretrain_models.Weights()
-model = weights_manager.get_pretrained_model("Sentinel2_SwinB_SI_RGB", fpn=True, head=satlaspretrain_models.Head.SEGMENT, 
+weights_manager = Weights()
+model = weights_manager.get_pretrained_model("Sentinel2_SwinB_SI_RGB", fpn=True, head=Head.SEGMENT, 
                                                 num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
 model = model.to(device)
 
