@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "src"
 version = "0.0.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Investigate remote sensing fairness mitigation with globally pre-trained Earth models."
+authors = ["Marlena Reil <marlena1@gmx.de>"]
 license = "MIT"
 readme = "README.md"
 
@@ -33,6 +33,7 @@ albumentations = "^2.0.5"
 ever-beta = "0.2.3"
 segmentation-models-pytorch = {git = "https://github.com/qubvel/segmentation_models.pytorch"}
 torchmetrics = "^1.6.2"
+wandb = "^0.19.8"
 
 [tool.poetry.group.dev.dependencies]
 # Optional dependencies that need to be installed with poetry
