@@ -23,8 +23,8 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "satlaspretrain_models")))
 
-from satlaspretrain_models.model import Weights, Model
-from satlaspretrain_models.utils import Head, Backbone
+from satlaspretrain_models.satlaspretrain_models.model import Weights, Model
+from satlaspretrain_models.satlaspretrain_models.utils import Head, Backbone
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
