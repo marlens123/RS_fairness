@@ -30,7 +30,6 @@ optional = true
 python = ">=3.10,<3.12"
 albumentations = "^2.0.5"
 ever-beta = "0.2.3"
-segmentation-models-pytorch = {git = "https://github.com/qubvel/segmentation_models.pytorch"}
 torchmetrics = "^1.6.2"
 wandb = "^0.19.8"
 
