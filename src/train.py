@@ -50,7 +50,6 @@ if not args.disable_wandb:
         project='rs_fairness',
         name=args.run_name,
     )
-    wandb.config.update(config)
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
 VAL_DATA_CONFIG = config.data["test"]["params"]
