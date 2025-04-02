@@ -67,25 +67,6 @@ model = model.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
 
-
-####################################
-# Remove this block later, only for testing
-####################################
-valid = 0
-invalid = 0
-for data, target in train_dataloader:
-    if target['cls'].any() == -1:
-        invalid += 1
-    else:
-        valid += 1
-
-print("Invalid data = ", invalid)
-print("Valid data = ", valid)
-####################################
-# End of block
-####################################
-
-
 # Training loop.
 for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)

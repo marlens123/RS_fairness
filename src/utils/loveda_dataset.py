@@ -103,7 +103,7 @@ class LoveDALoader(DataLoader, ConfigurableMixin):
         ConfigurableMixin.__init__(self, config)
         dataset = LoveDA(self.config.image_dir, self.config.mask_dir, self.config.transforms)
         if self.config.CV.i != -1:
-            CV = CrossValSamplerGenerator(dataset, distributed=True, seed=2333)
+            CV = CrossValSamplerGenerator(dataset, distributed=False, seed=2333)
             sampler_pairs = CV.k_fold(self.config.CV.k)
             train_sampler, val_sampler = sampler_pairs[self.config.CV.i]
             if self.config.training:
