@@ -4,6 +4,20 @@
 
 Final class project Rsponsible AI course.
 
+(TODO: Credit SatlasPretrain and LoveDA)
+
+Note:
+
+This repository contains a submodule (forked satlaspretrain-models repo). To properly initiate the submodule run the following:
+
+´git submodule update --init --recursive´
+
+Note: Since we are using git submodules, instead of simply pulling from the main repo, we also always have to update the submodule, in this order:
+
+´git pull origin main´
+´git submodule update --init --recursive´
+
+
 ## Initialization
 
 Please follow these steps:
