@@ -49,7 +49,7 @@ LEARNING_RATE = config.learning_rate
 NUM_EPOCHS = config.train["num_epochs"]
 
 # Experiment arguments.
-device = torch.device('cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 val_step = 1  # evaluate every val_step epochs
 
 save_path = 'weights/'  # where to save model weights
@@ -67,6 +67,14 @@ model = model.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
 
+# time to iterate through the trainloader
+import time
+start = time.time()
+for data, target in train_dataloader:
+    pass
+end = time.time()
+print("Time to iterate through the trainloader: ", end-start)
+
 # Training loop.
 for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
@@ -74,6 +82,8 @@ for epoch in range(NUM_EPOCHS):
     train_loss = 0
 
     for data, target in train_dataloader:
+        data = data.to(device)
+        target = target.to(device)
         # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
         output, loss = model(data, target['cls'])
         print(f"Train Loss = {loss}", flush=True)
@@ -95,6 +105,7 @@ for epoch in range(NUM_EPOCHS):
         mean_iou = 0
 
         for val_data, val_target in val_dataloader:
+            val_data = val_data.to(device)
             val_target = val_target['cls'].to(device)
             val_output, loss = model(val_data, val_target)
 
