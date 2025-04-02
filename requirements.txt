@@ -1,0 +1,11 @@
+# as a workaround when poetry setup does not work
+numpy == 2.2.3
+torch == 2.6.0
+torchvision == 0.21.0
+torchmetrics == 1.6.2
+wandb == 0.19.8
+albumentations == 2.0.5
+pillow == 11.1.0
+scikit-image == 0.25.2
+ever-beta == 0.2.3
+requests == 2.32.3
