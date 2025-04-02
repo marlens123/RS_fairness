@@ -95,7 +95,7 @@ for epoch in range(NUM_EPOCHS):
     for data, target in train_dataloader:
         # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
         output, loss = model(data, target['cls'])
-        print("Train Loss = ", loss)
+        print(f"Train Loss = {loss}", flush=True)
 
         loss.backward()
         optimizer.step()
