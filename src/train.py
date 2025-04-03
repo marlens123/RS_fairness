@@ -21,6 +21,7 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
 argparser.add_argument("--disable_wandb", action="store_true", help="Disable wandb for logging")
 argparser.add_argument("--run_name", type=str, default="loveda_test")
+argparser.add_argument("--model_identifier", type=str, default="Sentinel2_SwinB_SI_RGB", choices=["Aerial_SwinB_SI", "Sentinel2_SwinB_SI_RGB", "Aerial_SwinB_MI", "Sentinel2_SwinB_MI_RGB", "Sentinel2_Resnet50_SI_RGB", "Sentinel2_Resnet50_MI_RGB"])
 
 args = argparser.parse_args()
 
@@ -61,11 +62,14 @@ val_dataloader = LoveDALoader(VAL_DATA_CONFIG)
 # Initialize a pretrained model, using the SatlasPretrain single-image Swin-v2-Base Sentinel-2 image model weights
 # with a segmentation head with num_categories=7, since LoveDA has 7 classes.
 weights_manager = Weights()
-model = weights_manager.get_pretrained_model("Sentinel2_SwinB_SI_RGB", fpn=True, head=Head.SEGMENT, 
+model = weights_manager.get_pretrained_model(args.model_identifier, fpn=True, head=Head.SEGMENT, 
                                                 num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
 model = model.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
+#optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
+
+# AdamW optimizer
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.0001)
 
 # time to iterate through the trainloader
 import time
@@ -85,13 +89,14 @@ for epoch in range(NUM_EPOCHS):
 
     for data, target in train_dataloader:
         with torch.cuda.amp.autocast():  # Mixed precision
+            data, target = data.to(device), target['cls'].to(device)
             # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
-            output, loss = model(data.to(device), target['cls'].to(device))
+            output, loss = model(data, target)
             print(f"Train Loss = {loss}", flush=True)
+        optimizer.zero_grad()
         scaler.scale(loss).backward()
         scaler.step(optimizer)
         scaler.update()
-        optimizer.zero_grad()
 
         train_loss += loss.item()
 
