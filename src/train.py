@@ -83,9 +83,9 @@ for epoch in range(NUM_EPOCHS):
 
     for data, target in train_dataloader:
         data = data.to(device)
-        target = target.to(device)
+        target = target['cls'].to(device)
         # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
-        output, loss = model(data, target['cls'])
+        output, loss = model(data, target)
         print(f"Train Loss = {loss}", flush=True)
 
         loss.backward()
