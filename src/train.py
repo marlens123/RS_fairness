@@ -77,7 +77,7 @@ elif args.pretraining_dataset == "ImageNet":
     from .imagenetpretrain_models.utils import Head
     # load model weights from imagenet
     weights_manager = ImageNetWeights()
-    model = weights_manager.get_pretrained_model(backbone=args.imagenet_model_identifier, fpn=True, head=ImageNetHead.SEGMENT, 
+    model = weights_manager.get_pretrained_model(backbone=args.imagenet_model_identifier, fpn=True, head=Head.SEGMENT, 
                                                     num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
 else:
     raise ValueError("Invalid pretraining dataset. Choose either 'Satlas' or 'ImageNet'.")
