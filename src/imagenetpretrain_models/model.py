@@ -3,7 +3,7 @@ Inspired by satlaspretrain_models/model.py, adjusted to use ImageNet weights.
 """
 from .heads import SimpleHead
 from .fpn import FPN, Upsample
-from .backbones import SwinBackbone
+from .backbones import SwinBackbone, ResnetBackbone
 from .utils import adjust_state_dict_prefix, Backbone, Head
 import requests
 import torch
@@ -38,6 +38,8 @@ class ImageNetWeights:
             backbone = Backbone.SWINB
         elif backbone == "swint":
             backbone = Backbone.SWINT
+        elif backbone == "resnet50":
+            backbone = Backbone.RESNET50
         else:
             raise ValueError("Currently only SWINB and SWINT backbones are supported.")
 
@@ -93,6 +95,8 @@ class Model(torch.nn.Module):
             backbone = SwinBackbone(num_channels, arch='swinb', weights=weights)
         elif backbone_arch == Backbone.SWINT:
             backbone = SwinBackbone(num_channels, arch='swint', weights=weights)
+        elif backbone_arch == Backbone.RESNET50:
+            backbone = ResnetBackbone(num_channels, arch='resnet50', weights=weights)
         else:
             raise ValueError("Unsupported backbone architecture.")
         
@@ -105,10 +109,12 @@ class Model(torch.nn.Module):
         else:
             prefix_allowed_count = 1
 
+        """
         # Load pretrained weights into the intialized backbone if weights were specified.
         if weights is not None:
             state_dict = adjust_state_dict_prefix(weights, 'backbone', 'backbone.', prefix_allowed_count)
-            backbone.load_state_dict(state_dict)
+            backbone.load_state_dict(state_dict)"
+        """
 
         return backbone
 
