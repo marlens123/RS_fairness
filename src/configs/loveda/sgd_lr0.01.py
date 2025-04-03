@@ -31,7 +31,7 @@ data = dict(
             CV=dict(k=10, i=-1),
             training=True,
             batch_size=16,
-            num_workers=2,
+            num_workers=4,
             num_classes=7,
         ),
     ),
@@ -81,7 +81,7 @@ learning_rate = dict(
     ))
 train = dict(
     forward_times=1,
-    num_epochs=10,
+    num_epochs=200,
     eval_per_epoch=True,
     summary_grads=False,
     summary_weights=False,
