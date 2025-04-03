@@ -118,7 +118,7 @@ for epoch in range(NUM_EPOCHS):
                 # Only for testing, remove later
                 ####################################################################################
                 jaccard = JaccardIndex(
-                    task="multiclass", num_classes=TRAIN_DATA_CONFIG["num_classes"], average="macro"
+                    task="multiclass", num_classes=TRAIN_DATA_CONFIG["num_classes"], average="macro", ignore_index=-1
                 ).to(device)
                 mean_jaccard = jaccard(val_output, val_target.squeeze(1))
 
@@ -133,9 +133,10 @@ for epoch in range(NUM_EPOCHS):
                 val_labels = torch.argmax(val_output, dim=1)  # Shape: [batch_size, H, W]
 
                 iou_per_class = []
-                for cls in range(val_labels.shape[1]):  # Loop over classes
-                    inter = ((val_labels == cls) & (val_target == cls)).sum()
-                    union = ((val_labels == cls) | (val_target == cls)).sum()
+                for cls in range(val_output.shape[1]):  # Loop over classes
+                    valid_mask = val_target != -1
+                    inter = ((val_labels == cls) & (val_target == cls) & valid_mask).sum()
+                    union = ((val_labels == cls) | (val_target == cls) & valid_mask).sum()
                     if union > 0:
                         iou_per_class.append((inter / union).item())
                 iou_mean = np.mean(iou_per_class) if iou_per_class else 0
