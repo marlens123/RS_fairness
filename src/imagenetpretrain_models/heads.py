@@ -1,7 +1,6 @@
 """
 Inspired by satlaspretrain_models/models/heads.py, adjusted to use ImageNet weights.
 """
-
 import torch
 
 class SimpleHead(torch.nn.Module):

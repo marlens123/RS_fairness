@@ -15,7 +15,6 @@ import importlib.util
 import wandb
 
 from .satlaspretrain_models.satlaspretrain_models.model import Weights as SatlasWeights
-from .satlaspretrain_models.satlaspretrain_models.utils import Head, Backbone
 
 from .imagenetpretrain_models.model import ImageNetWeights
 
@@ -69,14 +68,16 @@ train_dataloader = LoveDALoader(TRAIN_DATA_CONFIG)
 val_dataloader = LoveDALoader(VAL_DATA_CONFIG)
 
 if args.pretraining_dataset == "Satlas":
+    from .satlaspretrain_models.satlaspretrain_models.utils import Head
     # load model weights from satlas
     weights_manager = SatlasWeights()
     model = weights_manager.get_pretrained_model(args.satlas_model_identifier, fpn=True, head=Head.SEGMENT, 
                                                     num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
 elif args.pretraining_dataset == "ImageNet":
+    from .imagenetpretrain_models.utils import Head
     # load model weights from imagenet
     weights_manager = ImageNetWeights()
-    model = weights_manager.get_pretrained_model(backbone=args.imagenet_model_identifier, fpn=True, head=Head.SEGMENT, 
+    model = weights_manager.get_pretrained_model(backbone=args.imagenet_model_identifier, fpn=True, head=ImageNetHead.SEGMENT, 
                                                     num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
 else:
     raise ValueError("Invalid pretraining dataset. Choose either 'Satlas' or 'ImageNet'.")

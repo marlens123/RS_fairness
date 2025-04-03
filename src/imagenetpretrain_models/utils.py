@@ -1,7 +1,6 @@
 """
 Inspired by satlaspretrain_models/utils.py, adjusted to use ImageNet weights.
 """
-
 from enum import Enum, auto
 
 class Backbone(Enum):

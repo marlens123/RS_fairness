@@ -1,7 +1,6 @@
 """
 Inspired by satlaspretrain_models/models/fpn.py, adjusted to use ImageNet weights.
 """
-
 import torch
 import collections
 import torchvision
