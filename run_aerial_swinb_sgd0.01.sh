@@ -11,4 +11,4 @@ conda activate rs_fairness
 
 export WANDB_API_KEY=d2ca547c9f807e8db70308537f4d7b64b6077b81
 
-python -m src.train --model_identifier "Aerial_SwinB_SI" --config_file "src/configs/loveda/sgd_lr0.01.py"
+python -m src.train --pretraining_dataset "Satlas" --satlas_model_identifier "Aerial_SwinB_SI" --config_file "src/configs/loveda/sgd_lr0.01.py"

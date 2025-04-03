@@ -14,18 +14,25 @@ from torchmetrics import JaccardIndex
 import importlib.util
 import wandb
 
-from .satlaspretrain_models.satlaspretrain_models.model import Weights, Model
+from .satlaspretrain_models.satlaspretrain_models.model import Weights as SatlasWeights
 from .satlaspretrain_models.satlaspretrain_models.utils import Head, Backbone
+
+from .imagenetpretrain_models.model import ImageNetWeights
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/adamw_lr0.001.py")
 argparser.add_argument("--disable_wandb", action="store_true", help="Disable wandb for logging")
-argparser.add_argument("--model_identifier", type=str, default="Sentinel2_SwinB_SI_RGB", choices=["Aerial_SwinB_SI", "Aerial_SwinB_MI", "Sentinel2_SwinB_SI_RGB", "Sentinel2_SwinB_MI_RGB", "Sentinel2_SwinT_SI_RGB", "Sentinel2_SwinT_MI_RGB", "Sentinel2_Resnet50_SI_RGB", "Sentinel2_Resnet50_MI_RGB"])
+argparser.add_argument("--pretraining_dataset", type=str, default="Satlas", choices=["Satlas", "ImageNet"])
+argparser.add_argument("--imagenet_model_identifier", type=str, default="swinb", choices=["swinb", "swint"])
+argparser.add_argument("--satlas_model_identifier", type=str, default="Sentinel2_SwinB_SI_RGB", choices=["Aerial_SwinB_SI", "Aerial_SwinB_MI", "Sentinel2_SwinB_SI_RGB", "Sentinel2_SwinB_MI_RGB", "Sentinel2_SwinT_SI_RGB", "Sentinel2_SwinT_MI_RGB", "Sentinel2_Resnet50_SI_RGB", "Sentinel2_Resnet50_MI_RGB"])
 
 args = argparser.parse_args()
 
 # save name should be a combination of the model identifier and the config file name
-args.run_name = args.model_identifier + "_" + os.path.basename(args.config_file).split(".")[0].split("/")[-1]
+if args.pretraining_dataset == "Satlas":
+    args.run_name = args.pretraining_dataset + "_" + args.satlas_model_identifier + "_" + os.path.basename(args.config_file).split(".")[0].split("/")[-1]
+elif args.pretraining_dataset == "ImageNet":
+    args.run_name = args.pretraining_dataset + "_" + args.imagenet_model_identifier + "_" + os.path.basename(args.config_file).split(".")[0].split("/")[-1]
 
 def load_config(config_path):
     """Dynamically load a Python module from a given file path."""
@@ -61,11 +68,19 @@ os.makedirs(save_path, exist_ok=True)
 train_dataloader = LoveDALoader(TRAIN_DATA_CONFIG)
 val_dataloader = LoveDALoader(VAL_DATA_CONFIG)
 
-# Initialize a pretrained model, using the SatlasPretrain single-image Swin-v2-Base Sentinel-2 image model weights
-# with a segmentation head with num_categories=7, since LoveDA has 7 classes.
-weights_manager = Weights()
-model = weights_manager.get_pretrained_model(args.model_identifier, fpn=True, head=Head.SEGMENT, 
-                                                num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
+if args.pretraining_dataset == "Satlas":
+    # load model weights from satlas
+    weights_manager = SatlasWeights()
+    model = weights_manager.get_pretrained_model(args.satlas_model_identifier, fpn=True, head=Head.SEGMENT, 
+                                                    num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
+elif args.pretraining_dataset == "ImageNet":
+    # load model weights from imagenet
+    weights_manager = ImageNetWeights()
+    model = weights_manager.get_pretrained_model(backbone=args.imagenet_model_identifier, fpn=True, head=Head.SEGMENT, 
+                                                    num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
+else:
+    raise ValueError("Invalid pretraining dataset. Choose either 'Satlas' or 'ImageNet'.")
+
 model = model.to(device)
 
 if config.optimizer == 'adamw':
