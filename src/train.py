@@ -47,8 +47,8 @@ if not args.disable_wandb:
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
 VAL_DATA_CONFIG = config.data["test"]["params"]
-OPTIMIZER = config.optimizer
-LEARNING_RATE = config.learning_rate
+LEARNING_RATE = config.lr
+WEIGHT_DECAY = config.weight_decay
 NUM_EPOCHS = config.train["num_epochs"]
 
 # Experiment arguments.
@@ -67,6 +67,11 @@ weights_manager = Weights()
 model = weights_manager.get_pretrained_model(args.model_identifier, fpn=True, head=Head.SEGMENT, 
                                                 num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
 model = model.to(device)
+
+if config.optimizer == 'adamw':
+    OPTIMIZER = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+elif config.optimizer == 'sgd':
+    OPTIMIZER = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9, weight_decay=WEIGHT_DECAY)
 
 # time to iterate through the trainloader
 import time

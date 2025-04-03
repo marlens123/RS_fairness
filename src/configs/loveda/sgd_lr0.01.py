@@ -1,6 +1,7 @@
 from albumentations import Compose, OneOf, Normalize
 from albumentations import HorizontalFlip, VerticalFlip, RandomRotate90, RandomCrop
 import ever as er
+import torch
 
 data = dict(
     train=dict(
@@ -61,24 +62,9 @@ data = dict(
         ),
     ),
 )
-optimizer = dict(
-    type='sgd',
-    params=dict(
-        momentum=0.9,
-        weight_decay=0.0001
-    ),
-    grad_clip=dict(
-        max_norm=35,
-        norm_type=2,
-    )
-)
-learning_rate = dict(
-    type='poly',
-    params=dict(
-        base_lr=0.01,
-        power=0.9,
-        max_iters=15000,
-    ))
+optimizer = 'sgd'
+weight_decay = 0.0001
+lr = 0.01
 train = dict(
     forward_times=1,
     num_epochs=200,
