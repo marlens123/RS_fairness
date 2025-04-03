@@ -18,12 +18,14 @@ from .satlaspretrain_models.satlaspretrain_models.model import Weights, Model
 from .satlaspretrain_models.satlaspretrain_models.utils import Head, Backbone
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--config_file", type=str, default="src/configs/loveda/loveda.py")
+argparser.add_argument("--config_file", type=str, default="src/configs/loveda/adamw_lr0.001.py")
 argparser.add_argument("--disable_wandb", action="store_true", help="Disable wandb for logging")
-argparser.add_argument("--run_name", type=str, default="loveda_test")
-argparser.add_argument("--model_identifier", type=str, default="Sentinel2_SwinB_SI_RGB", choices=["Aerial_SwinB_SI", "Sentinel2_SwinB_SI_RGB", "Aerial_SwinB_MI", "Sentinel2_SwinB_MI_RGB", "Sentinel2_Resnet50_SI_RGB", "Sentinel2_Resnet50_MI_RGB"])
+argparser.add_argument("--model_identifier", type=str, default="Sentinel2_SwinB_SI_RGB", choices=["Aerial_SwinB_SI", "Aerial_SwinB_MI", "Sentinel2_SwinB_SI_RGB", "Sentinel2_SwinB_MI_RGB", "Sentinel2_SwinT_SI_RGB", "Sentinel2_SwinT_MI_RGB", "Sentinel2_Resnet50_SI_RGB", "Sentinel2_Resnet50_MI_RGB"])
 
 args = argparser.parse_args()
+
+# save name should be a combination of the model identifier and the config file name
+args.run_name = args.model_identifier + "_" + os.path.basename(args.config_file).split(".")[0].split("/")[-1]
 
 def load_config(config_path):
     """Dynamically load a Python module from a given file path."""
@@ -66,11 +68,6 @@ model = weights_manager.get_pretrained_model(args.model_identifier, fpn=True, he
                                                 num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
 model = model.to(device)
 
-#optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
-
-# AdamW optimizer
-optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.0001)
-
 # time to iterate through the trainloader
 import time
 start = time.time()
@@ -93,9 +90,9 @@ for epoch in range(NUM_EPOCHS):
             # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
             output, loss = model(data, target)
             print(f"Train Loss = {loss}", flush=True)
-        optimizer.zero_grad()
+        OPTIMIZER.zero_grad()
         scaler.scale(loss).backward()
-        scaler.step(optimizer)
+        scaler.step(OPTIMIZER)
         scaler.update()
 
         train_loss += loss.item()
@@ -156,5 +153,6 @@ for epoch in range(NUM_EPOCHS):
             wandb.log({"epoch": epoch, "val_miou": mean_iou / len(val_dataloader)})
 
         # Save the model checkpoint at the end of each epoch.
-        torch.save(model.state_dict(), save_path + str(epoch) + '_model_weights.pth')
+        path_to_save = os.path.join(save_path, f'{args.run_name}' + f'{str(epoch)}_model_weights.pth')
+        torch.save(model.state_dict(), path_to_save)
 
