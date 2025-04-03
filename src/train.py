@@ -106,42 +106,43 @@ for epoch in range(NUM_EPOCHS):
         jac_m = 0
         mean_iou = 0
 
-        for val_data, val_target in val_dataloader:
-            val_data = val_data.to(device)
-            val_target = val_target['cls'].to(device)
-            val_output, loss = model(val_data, val_target)
+        with torch.no_grad():
+            for val_data, val_target in val_dataloader:
+                val_data = val_data.to(device)
+                val_target = val_target['cls'].to(device)
+                val_output, loss = model(val_data, val_target)
 
-            val_loss += loss.item()
+                val_loss += loss.item()
 
-            ####################################################################################
-            # Only for testing, remove later
-            ####################################################################################
-            jaccard = JaccardIndex(
-                task="multiclass", num_classes=TRAIN_DATA_CONFIG["num_classes"], average="macro"
-            ).to(device)
-            mean_jaccard = jaccard(val_output, val_target.squeeze(1))
+                ####################################################################################
+                # Only for testing, remove later
+                ####################################################################################
+                jaccard = JaccardIndex(
+                    task="multiclass", num_classes=TRAIN_DATA_CONFIG["num_classes"], average="macro"
+                ).to(device)
+                mean_jaccard = jaccard(val_output, val_target.squeeze(1))
 
-            jac_m += mean_jaccard.item()
+                jac_m += mean_jaccard.item()
 
-            print("Validation mean IoU = ", mean_jaccard.item())
-            ####################################################################################
-            # End of testing block
-            ####################################################################################
+                print("Validation mean IoU = ", mean_jaccard.item())
+                ####################################################################################
+                # End of testing block
+                ####################################################################################
 
-            # Comparison IoU computation
-            val_labels = torch.argmax(val_output, dim=1)  # Shape: [batch_size, H, W]
+                # Comparison IoU computation
+                val_labels = torch.argmax(val_output, dim=1)  # Shape: [batch_size, H, W]
 
-            iou_per_class = []
-            for cls in range(val_labels.shape[1]):  # Loop over classes
-                inter = ((val_labels == cls) & (val_target == cls)).sum()
-                union = ((val_labels == cls) | (val_target == cls)).sum()
-                if union > 0:
-                    iou_per_class.append((inter / union).item())
-            iou_mean = np.mean(iou_per_class) if iou_per_class else 0
+                iou_per_class = []
+                for cls in range(val_labels.shape[1]):  # Loop over classes
+                    inter = ((val_labels == cls) & (val_target == cls)).sum()
+                    union = ((val_labels == cls) | (val_target == cls)).sum()
+                    if union > 0:
+                        iou_per_class.append((inter / union).item())
+                iou_mean = np.mean(iou_per_class) if iou_per_class else 0
 
-            mean_iou += iou_mean
+                mean_iou += iou_mean
 
-            print("Compared validation mean IoU = ", iou_mean)
+                print("Compared validation mean IoU = ", iou_mean)
 
         if not args.disable_wandb:
             wandb.log({"epoch": epoch, "val_loss": val_loss/len(val_dataloader)})
