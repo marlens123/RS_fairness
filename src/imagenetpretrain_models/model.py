@@ -1,7 +1,6 @@
 """
 Inspired by satlaspretrain_models/model.py, adjusted to use ImageNet weights.
 """
-
 from .heads import SimpleHead
 from .fpn import FPN, Upsample
 from .backbones import SwinBackbone
@@ -69,9 +68,9 @@ class Model(torch.nn.Module):
 
         # Validate user-provided arguments.
         if not isinstance(backbone, Backbone):
-            raise ValueError("Invalid backbone.")
+            raise ValueError(f"Invalid backbone: {backbone}.")
         if head and not isinstance(head, Head):
-            raise ValueError("Invalid head.")
+            raise ValueError(f"Invalid head: {head}.")
         if head and (num_categories is None):
             raise ValueError("Must specify num_categories if head is desired.")
 
