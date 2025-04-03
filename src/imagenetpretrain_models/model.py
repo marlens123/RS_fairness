@@ -79,7 +79,7 @@ class Model(torch.nn.Module):
         self.backbone = self._initialize_backbone(num_channels, backbone, multi_image, weights)
 
         if fpn:
-            self.fpn = self._initialize_fpn(self.backbone.out_channels, weights)
+            self.fpn = self._initialize_fpn(self.backbone.out_channels)
             self.upsample = Upsample(self.fpn.out_channels)
         else:
             self.fpn = None
