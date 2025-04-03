@@ -75,6 +75,8 @@ for data, target in train_dataloader:
 end = time.time()
 print("Time to iterate through the trainloader: ", end-start)
 
+scaler = torch.cuda.amp.GradScaler()
+
 # Training loop.
 for epoch in range(NUM_EPOCHS):
     print("Starting Epoch...", epoch)
@@ -82,15 +84,15 @@ for epoch in range(NUM_EPOCHS):
     train_loss = 0
 
     for data, target in train_dataloader:
-        data = data.to(device)
-        target = target['cls'].to(device)
-        # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
-        output, loss = model(data, target)
-        print(f"Train Loss = {loss}", flush=True)
-
-        loss.backward()
-        optimizer.step()
+        with torch.cuda.amp.autocast():  # Mixed precision
+            # loss is going to be cross entropy loss and pixels with -1 are ignored by the loss function
+            output, loss = model(data.to(device), target['cls'].to(device))
+            print(f"Train Loss = {loss}", flush=True)
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
         optimizer.zero_grad()
+
         train_loss += loss.item()
 
     if not args.disable_wandb:
