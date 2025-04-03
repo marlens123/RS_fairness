@@ -29,7 +29,9 @@ class SwinBackbone(torch.nn.Module):
         else:
             raise ValueError("Backbone architecture not supported.")
 
-        self.backbone.features[0][0] = torch.nn.Conv2d(num_channels, self.backbone.features[0][0].out_channels, kernel_size=(4, 4), stride=(4, 4))
+        if num_channels != 3:
+            print(f"Changing input channels from 3 to {num_channels}. Note that this layer won't be pretrained.", flush=True)
+            self.backbone.features[0][0] = torch.nn.Conv2d(num_channels, self.backbone.features[0][0].out_channels, kernel_size=(4, 4), stride=(4, 4))
 
     def forward(self, x):
         outputs = []
@@ -51,7 +53,9 @@ class ResnetBackbone(torch.nn.Module):
         else:
             raise ValueError("Backbone architecture not supported.")
 
-        self.resnet.conv1 = torch.nn.Conv2d(num_channels, self.resnet.conv1.out_channels, kernel_size=7, stride=2, padding=3, bias=False)
+        if num_channels != 3:
+            print(f"Changing input channels from 3 to {num_channels}. Note that this layer won't be pretrained.", flush=True)
+            self.resnet.conv1 = torch.nn.Conv2d(num_channels, self.resnet.conv1.out_channels, kernel_size=7, stride=2, padding=3, bias=False)
         self.out_channels = [
             [4, ch[0]],
             [8, ch[1]],
