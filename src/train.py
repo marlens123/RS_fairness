@@ -21,7 +21,7 @@ from .imagenetpretrain_models.model import ImageNetWeights
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--config_file", type=str, default="src/configs/loveda/adamw_lr0.001.py")
 argparser.add_argument("--disable_wandb", action="store_true", help="Disable wandb for logging")
-argparser.add_argument("--pretraining_dataset", type=str, default="Satlas", choices=["Satlas", "ImageNet"])
+argparser.add_argument("--pretraining_dataset", type=str, default="Satlas", choices=["Satlas", "ImageNet", "none"])
 argparser.add_argument("--imagenet_model_identifier", type=str, default="swinb", choices=["swinb", "swint", "resnet50"])
 argparser.add_argument("--satlas_model_identifier", type=str, default="Sentinel2_SwinB_SI_RGB", choices=["Aerial_SwinB_SI", "Aerial_SwinB_MI", "Sentinel2_SwinB_SI_RGB", "Sentinel2_SwinB_MI_RGB", "Sentinel2_SwinT_SI_RGB", "Sentinel2_SwinT_MI_RGB", "Sentinel2_Resnet50_SI_RGB", "Sentinel2_Resnet50_MI_RGB"])
 
@@ -79,12 +79,14 @@ elif args.pretraining_dataset == "ImageNet":
     weights_manager = ImageNetWeights()
     model = weights_manager.get_pretrained_model(backbone=args.imagenet_model_identifier, fpn=True, head=Head.SEGMENT, 
                                                     num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu')
+elif args.pretraining_dataset == "none":
+    from .imagenetpretrain_models.utils import Head
+    # load model weights from imagenet
+    weights_manager = ImageNetWeights()
+    model = weights_manager.get_pretrained_model(backbone=args.imagenet_model_identifier, fpn=True, head=Head.SEGMENT, 
+                                                    num_categories=TRAIN_DATA_CONFIG["num_classes"], device='cpu', weights=None)    
 else:
     raise ValueError("Invalid pretraining dataset. Choose either 'Satlas' or 'ImageNet'.")
-
-with torch.no_grad():
-    weights = model.backbone.backbone.features[0][0].weight
-    print("Weight stats (mean/std):", weights.mean().item(), weights.std().item(), flush=True)
 
 model = model.to(device)
 
