@@ -31,8 +31,8 @@ class ImageNetWeights:
         if head and (num_categories is None):
             raise ValueError("Must specify num_categories if head is desired.")
         
-        if weights is not "IMAGENET1K_V1":
-            raise ValueError("Currently only IMAGENET1K_V1 weights are supported.")
+        if weights not in ["IMAGENET1K_V1", None]:
+            raise ValueError("Currently only IMAGENET1K_V1 weights or training from scratch is supported.")
         
         if backbone == "swinb":
             backbone = Backbone.SWINB
