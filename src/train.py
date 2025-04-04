@@ -251,6 +251,8 @@ for epoch in range(NUM_EPOCHS):
                     ).sum()
                     if union > 0:
                         iou_per_class.append((inter / union).item())
+                    else:
+                        iou_per_class.append(0)
                 iou_mean = np.mean(iou_per_class) if iou_per_class else 0
 
                 mean_iou += iou_mean
