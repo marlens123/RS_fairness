@@ -32,6 +32,11 @@ if args.pretraining_dataset == "Satlas":
     args.run_name = args.pretraining_dataset + "_" + args.satlas_model_identifier + "_" + os.path.basename(args.config_file).split(".")[0].split("/")[-1]
 elif args.pretraining_dataset == "ImageNet":
     args.run_name = args.pretraining_dataset + "_" + args.imagenet_model_identifier + "_" + os.path.basename(args.config_file).split(".")[0].split("/")[-1]
+elif args.pretraining_dataset == "none":
+    args.run_name = "scratch_" + os.path.basename(args.config_file).split(".")[0].split("/")[-1]
+else:
+    raise ValueError("Invalid pretraining dataset. Choose either 'Satlas', 'ImageNet', or 'none'.")
+
 
 def load_config(config_path):
     """Dynamically load a Python module from a given file path."""
