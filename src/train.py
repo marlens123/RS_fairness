@@ -112,7 +112,7 @@ if not args.disable_wandb:
     wandb.login()
     wandb.init(
         entity="sea-ice",
-        project="rs_fairness",
+        project="RS_fairness",
         name=args.run_name,
     )
 
