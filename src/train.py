@@ -225,7 +225,7 @@ for epoch in range(NUM_EPOCHS):
         val_loss = 0
         jac_m = 0
         mean_iou = 0
-        per_class_iou = np.zeros((config.test["num_classes"],))
+        per_class_iou = np.zeros((VAL_DATA_CONFIG["num_classes"],))
 
         with torch.no_grad():
             for val_data, val_target in val_dataloader:
@@ -263,7 +263,7 @@ for epoch in range(NUM_EPOCHS):
             wandb.log({"epoch": epoch, "val_loss": val_loss / len(val_dataloader)})
             wandb.log({"epoch": epoch, "val_miou": mean_iou / len(val_dataloader)})
 
-            for cls in range(config.test["num_classes"]):
+            for cls in range(VAL_DATA_CONFIG["num_classes"]):
                 wandb.log(
                     {f"val_iou_class_{cls}": per_class_iou[cls] / len(val_dataloader)}
                 )
@@ -277,7 +277,7 @@ for epoch in range(NUM_EPOCHS):
 
             # mean of the bottom 30% of the classes
             bottom_30_percent_classes = np.argsort(per_class_iou / len(val_dataloader))[
-                : int(0.3 * config.test["num_classes"])
+                : int(0.3 * VAL_DATA_CONFIG["num_classes"])
             ]
             mean_bottom_30_percent_classes = np.mean(
                 per_class_iou[bottom_30_percent_classes] / len(val_dataloader)
@@ -288,7 +288,7 @@ for epoch in range(NUM_EPOCHS):
 
             # mean of the top 30% of the classes
             top_30_percent_classes = np.argsort(per_class_iou / len(val_dataloader))[
-                -int(0.3 * config.test["num_classes"]) :
+                -int(0.3 * VAL_DATA_CONFIG["num_classes"]) :
             ]
             mean_top_30_percent_classes = np.mean(
                 per_class_iou[top_30_percent_classes] / len(val_dataloader)
