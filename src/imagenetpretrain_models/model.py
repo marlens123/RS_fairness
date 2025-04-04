@@ -1,13 +1,13 @@
 """
 Inspired by satlaspretrain_models/model.py, adjusted to use ImageNet weights.
 """
+
 from .heads import SimpleHead
 from .fpn import FPN, Upsample
 from .backbones import SwinBackbone, ResnetBackbone
-from .utils import adjust_state_dict_prefix, Backbone, Head
-import requests
+from .utils import Backbone, Head
 import torch
-from io import BytesIO
+
 
 class ImageNetWeights:
     def __init__(self):
@@ -16,24 +16,34 @@ class ImageNetWeights:
         """
         super(ImageNetWeights, self).__init__()
 
-    def get_pretrained_model(self, backbone="swinb", weights="IMAGENET1K_V1", fpn=False, head=None, num_categories=None, device='cuda'):
+    def get_pretrained_model(
+        self,
+        backbone="swinb",
+        weights="IMAGENET1K_V1",
+        fpn=False,
+        head=None,
+        num_categories=None,
+        device="cuda",
+    ):
         """
         Find and load pretrained SatlasPretrain weights, based on the model_identifier argument.
         Option to load pretrained FPN and/or a randomly initialized head.
 
         Args:
-            model_identifier: 
+            model_identifier:
             fpn (bool): Whether or not to load a pretrained FPN along with the Backbone.
-            head (enum): If specified, a randomly initialized Head will be created along with the 
+            head (enum): If specified, a randomly initialized Head will be created along with the
                         Backbone and [optionally] the FPN.
             num_categories (int): Number of categories to be included in output from prediction head.
         """
         if head and (num_categories is None):
             raise ValueError("Must specify num_categories if head is desired.")
-        
+
         if weights not in ["IMAGENET1K_V1", None]:
-            raise ValueError("Currently only IMAGENET1K_V1 weights or training from scratch is supported.")
-        
+            raise ValueError(
+                "Currently only IMAGENET1K_V1 weights or training from scratch is supported."
+            )
+
         if backbone == "swinb":
             backbone = Backbone.SWINB
         elif backbone == "swint":
@@ -44,16 +54,30 @@ class ImageNetWeights:
             raise ValueError("Currently only SWINB and SWINT backbones are supported.")
 
         # Initialize a pretrained model using the Model() class.
-        model = Model(backbone=backbone, fpn=fpn, head=head, 
-                        num_categories=num_categories, weights=weights)
+        model = Model(
+            backbone=backbone,
+            fpn=fpn,
+            head=head,
+            num_categories=num_categories,
+            weights=weights,
+        )
         return model
 
 
 class Model(torch.nn.Module):
-    def __init__(self, num_channels=3, multi_image=False, backbone=Backbone.SWINB, fpn=False, head=None, num_categories=None, weights=None):
+    def __init__(
+        self,
+        num_channels=3,
+        multi_image=False,
+        backbone=Backbone.SWINB,
+        fpn=False,
+        head=None,
+        num_categories=None,
+        weights=None,
+    ):
         """
         Initializes a model, based on desired imagery source and model components. This class can be used directly to
-        create a randomly initialized model (if weights=None) or can be called from the Weights class to initialize a 
+        create a randomly initialized model (if weights=None) or can be called from the Weights class to initialize a
         SatlasPretrain pretrained foundation model.
 
         Args:
@@ -61,9 +85,9 @@ class Model(torch.nn.Module):
             multi_image (bool): Whether or not the model should expect single-image or multi-image input.
             backbone (Backbone): The architecture of the pretrained backbone. All image sources support SwinTransformer.
             fpn (bool): Whether or not to feed imagery through the pretrained Feature Pyramid Network after the backbone.
-            head (Head): If specified, a randomly initialized head will be included in the model. 
+            head (Head): If specified, a randomly initialized head will be included in the model.
             num_categories (int): If a Head is being returned as part of the model, must specify how many outputs are wanted.
-            weights (torch weights): Weights to be loaded into the model. Defaults to None (random initialization) unless 
+            weights (torch weights): Weights to be loaded into the model. Defaults to None (random initialization) unless
                                     initialized using the Weights class.
         """
         super(Model, self).__init__()
@@ -76,7 +100,9 @@ class Model(torch.nn.Module):
         if head and (num_categories is None):
             raise ValueError("Must specify num_categories if head is desired.")
 
-        self.backbone = self._initialize_backbone(num_channels, backbone, multi_image, weights)
+        self.backbone = self._initialize_backbone(
+            num_channels, backbone, multi_image, weights
+        )
 
         if fpn:
             self.fpn = self._initialize_fpn(self.backbone.out_channels)
@@ -85,27 +111,35 @@ class Model(torch.nn.Module):
             self.fpn = None
 
         if head:
-            self.head = self._initialize_head(head, self.fpn.out_channels, num_categories) if fpn else self._initialize_head(head, self.backbone.out_channels, num_categories)
+            self.head = (
+                self._initialize_head(head, self.fpn.out_channels, num_categories)
+                if fpn
+                else self._initialize_head(
+                    head, self.backbone.out_channels, num_categories
+                )
+            )
         else:
             self.head = None
 
     def _initialize_backbone(self, num_channels, backbone_arch, multi_image, weights):
         # Load backbone model according to specified architecture.
         if backbone_arch == Backbone.SWINB:
-            backbone = SwinBackbone(num_channels, arch='swinb', weights=weights)
+            backbone = SwinBackbone(num_channels, arch="swinb", weights=weights)
         elif backbone_arch == Backbone.SWINT:
-            backbone = SwinBackbone(num_channels, arch='swint', weights=weights)
+            backbone = SwinBackbone(num_channels, arch="swint", weights=weights)
         elif backbone_arch == Backbone.RESNET50:
-            backbone = ResnetBackbone(num_channels, arch='resnet50', weights=weights)
+            backbone = ResnetBackbone(num_channels, arch="resnet50", weights=weights)
         else:
             raise ValueError("Unsupported backbone architecture.")
-        
+
         # If using a model for multi-image, need the Aggretation to wrap underlying backbone model.
         prefix, prefix_allowed_count = None, None
         if backbone_arch in [Backbone.RESNET50, Backbone.RESNET152]:
             prefix_allowed_count = 0
         elif multi_image:
-            raise ValueError("Multi-image not supported for this backbone architecture.")
+            raise ValueError(
+                "Multi-image not supported for this backbone architecture."
+            )
         else:
             prefix_allowed_count = 1
 
@@ -126,7 +160,7 @@ class Model(torch.nn.Module):
     def _initialize_head(self, head, backbone_channels, num_categories):
         # Initialize the head (classification, detection, etc.) if specified
         if head == Head.SEGMENT:
-            return SimpleHead('segment', backbone_channels, num_categories)
+            return SimpleHead("segment", backbone_channels, num_categories)
         else:
             raise NotImplementedError("Head type currently not supported.")
         return None

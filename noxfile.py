@@ -41,7 +41,9 @@ def flake8(session):
 @nox.session()
 def complexity(session):
     paths = get_paths(session)
-    session.run("poetry", "run", "flake8", "--max-complexity", "7", *paths["all"], external=True)
+    session.run(
+        "poetry", "run", "flake8", "--max-complexity", "7", *paths["all"], external=True
+    )
 
 
 @nox.session()
