@@ -84,7 +84,7 @@ else:
 
 with torch.no_grad():
     weights = model.backbone.features[0][0].weight
-    print("Weight stats (mean/std):", weights.mean().item(), weights.std().item())
+    print("Weight stats (mean/std):", weights.mean().item(), weights.std().item(), flush=True)
 
 model = model.to(device)
 
