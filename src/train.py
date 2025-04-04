@@ -83,7 +83,7 @@ else:
     raise ValueError("Invalid pretraining dataset. Choose either 'Satlas' or 'ImageNet'.")
 
 with torch.no_grad():
-    weights = model.backbone.features[0][0].weight
+    weights = model.backbone.backbone.features[0][0].weight
     print("Weight stats (mean/std):", weights.mean().item(), weights.std().item(), flush=True)
 
 model = model.to(device)

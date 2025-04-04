@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -p long
-#SBATCH --time=08:00:00
+#SBATCH --time=2-00:00:00
 #SBATCH --error=error.txt
 #SBATCH --mem=64GB
 #SBATCH --gres=gpu:rtx8000
