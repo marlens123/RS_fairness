@@ -19,11 +19,12 @@ from .satlaspretrain_models.satlaspretrain_models.model import Weights as Satlas
 from .imagenetpretrain_models.model import ImageNetWeights
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--config_file", type=str, default="src/configs/loveda/adamw_lr0.001.py")
+argparser.add_argument("--config_file", type=str, default="adamw_lr0.001.py")
 argparser.add_argument("--disable_wandb", action="store_true", help="Disable wandb for logging")
 argparser.add_argument("--pretraining_dataset", type=str, default="Satlas", choices=["Satlas", "ImageNet", "none"])
 argparser.add_argument("--imagenet_model_identifier", type=str, default="swinb", choices=["swinb", "swint", "resnet50"])
 argparser.add_argument("--satlas_model_identifier", type=str, default="Sentinel2_SwinB_SI_RGB", choices=["Aerial_SwinB_SI", "Aerial_SwinB_MI", "Sentinel2_SwinB_SI_RGB", "Sentinel2_SwinB_MI_RGB", "Sentinel2_SwinT_SI_RGB", "Sentinel2_SwinT_MI_RGB", "Sentinel2_Resnet50_SI_RGB", "Sentinel2_Resnet50_MI_RGB"])
+argparser.add_argument("--split", type=str, choices=["random", "geogrpahic", "rural_urban", "urban_rural"], default="geographic", help="Split to use for training and validation.")
 
 args = argparser.parse_args()
 
@@ -46,6 +47,8 @@ def load_config(config_path):
     return config_module
 
 # Load the config dynamically
+args.config_file = os.path.join("src/configs/loveda", args.split, args.config_file)
+
 config = load_config(args.config_file)
 
 if not args.disable_wandb:
