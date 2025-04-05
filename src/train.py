@@ -115,7 +115,7 @@ if not args.disable_wandb:
     )
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
-VAL_DATA_CONFIG = config.data["test"]["params"]["full"]
+VAL_DATA_CONFIG = config.data["test"]["full"]["params"]
 LEARNING_RATE = config.lr
 WEIGHT_DECAY = config.weight_decay
 NUM_EPOCHS = config.train["num_epochs"]

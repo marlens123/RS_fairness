@@ -76,9 +76,9 @@ wandb.init(
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
 if args.split == "geographic":
-    VAL_DATA_CONFIG_FULL = config.data["test"]["params"]["full"]
-    VAL_DATA_CONFIG_URBAN = config.data["test"]["params"]["urban"]
-    VAL_DATA_CONFIG_RURAL = config.data["test"]["params"]["rural"]
+    VAL_DATA_CONFIG_FULL = config.data["test"]["full"]["params"]
+    VAL_DATA_CONFIG_URBAN = config.data["test"]["urban"]["params"]
+    VAL_DATA_CONFIG_RURAL = config.data["test"]["rural"]["params"]
 else:
     raise ValueError(
         "Invalid split. Only 'geographic' is implemented so far."
