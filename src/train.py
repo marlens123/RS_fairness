@@ -297,8 +297,9 @@ for epoch in range(NUM_EPOCHS):
             )
             wandb.log({"mean_top_30_percent_classes": mean_top_30_percent_classes})
 
-        # Save the model checkpoint at the end of each epoch.
-        path_to_save = os.path.join(
-            save_path, f"{args.run_name}" + f"{str(epoch)}_model_weights.pth"
-        )
-        torch.save(model.state_dict(), path_to_save)
+        # Save the model checkpoint at the end of every 10 epochs.
+        if epoch % 10 == 0:
+            path_to_save = os.path.join(
+                save_path, f"{args.run_name}" + f"{str(epoch)}_model_weights.pth"
+            )
+            torch.save(model.state_dict(), path_to_save)
