@@ -48,7 +48,7 @@ argparser.add_argument(
 argparser.add_argument(
     "--split",
     type=str,
-    choices=["random", "geogrpahic", "rural_urban", "urban_rural"],
+    choices=["random", "geographic", "rural_urban", "urban_rural"],
     default="geographic",
     help="Split to use for training and validation.",
 )
@@ -94,14 +94,12 @@ else:
         "Invalid pretraining dataset. Choose either 'Satlas', 'ImageNet', or 'none'."
     )
 
-
 def load_config(config_path):
     """Dynamically load a Python module from a given file path."""
     spec = importlib.util.spec_from_file_location("config_module", config_path)
     config_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(config_module)
     return config_module
-
 
 # Load the config dynamically
 args.config_file = os.path.join("src/configs/loveda", args.split, args.config_file)
@@ -117,7 +115,7 @@ if not args.disable_wandb:
     )
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
-VAL_DATA_CONFIG = config.data["test"]["params"]
+VAL_DATA_CONFIG = config.data["test"]["params"]["full"]
 LEARNING_RATE = config.lr
 WEIGHT_DECAY = config.weight_decay
 NUM_EPOCHS = config.train["num_epochs"]
