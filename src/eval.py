@@ -134,6 +134,10 @@ else:
         "Invalid pretraining dataset. Choose either 'Satlas' or 'ImageNet'."
     )
 
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
+
 # Load the model weights from the saved path
 model.load_state_dict(
     torch.load(model_save_path, map_location=torch.device("cpu"))
@@ -147,8 +151,8 @@ for id, val_loader in val_dataloaders.items():
 
     with torch.no_grad():
         for val_data, val_target in val_loader:
-            val_data = val_data
-            val_target = val_target["cls"]
+            val_data = val_data.to(device)
+            val_target = val_target["cls"].to(device)
             val_output, loss = model(val_data, val_target)
 
             val_loss += loss.item()
