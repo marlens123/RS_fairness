@@ -11,4 +11,4 @@ conda activate rs_fairness
 
 export WANDB_API_KEY=d2ca547c9f807e8db70308537f4d7b64b6077b81
 
-python -m src.train --pretraining_dataset "Satlas" --satlas_model_identifier "Aerial_SwinB_SI" --config_file "adamw_lr0.01.py"
+python -m src.train --pretraining_dataset "Satlas" --satlas_model_identifier "Sentinel2_SwinB_SI_RGB" --config_file "sgd_lr0.01.py" --random_seed 10 --split "random"
