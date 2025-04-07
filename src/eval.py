@@ -150,12 +150,14 @@ else:
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
 
 # Load the model weights from the saved path
 model.load_state_dict(
     torch.load(model_save_path, map_location=torch.device("cpu"))
 )
+
+model.to(device)
+model.eval()
 
 for id, val_loader in val_dataloaders.items():
     val_loss = 0
