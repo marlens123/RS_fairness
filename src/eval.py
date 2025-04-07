@@ -5,6 +5,7 @@ import numpy as np
 from .utils.loveda_dataset import LoveDALoader
 import importlib.util
 import wandb
+import random
 
 from .satlaspretrain_models.satlaspretrain_models.model import Weights as SatlasWeights
 
@@ -50,10 +51,23 @@ argparser.add_argument(
     default="geographic",
     help="Split to use for training and validation.",
 )
+argparser.add_argument(
+    "--random_seed", type=int, default=10, help="Random seed for reproducibility."
+)
 
 args = argparser.parse_args()
 
-model_save_path = os.path.join(f"weights/{args.saved_weights}")
+random.seed(args.random_seed)
+np.random.seed(args.random_seed)
+torch.manual_seed(args.random_seed)
+if torch.cuda.is_available():
+    print("Setting seed for GPU")
+    torch.cuda.manual_seed(args.random_seed)
+    torch.cuda.manual_seed_all(args.random_seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+
+model_save_path = os.path.join(f"final_weights/{args.saved_weights}")
 
 def load_config(config_path):
     """Dynamically load a Python module from a given file path."""
@@ -214,3 +228,7 @@ for id, val_loader in val_dataloaders.items():
             per_class_iou[top_30_percent_classes] / len(val_loader)
         )
         wandb.log({f"mean_top_30_percent_classes_{id}": mean_top_30_percent_classes})
+
+        # print all metrics
+        print(f"val_loss_{id}: {val_loss / len(val_loader)}")
+        print(f"val_miou_{id}: {mean_iou / len(val_loader)}")

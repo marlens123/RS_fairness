@@ -232,8 +232,6 @@ for epoch in range(NUM_EPOCHS):
                 val_output, loss = model(val_data, val_target)
 
                 val_loss += loss.item()
-
-                # Comparison IoU computation
                 val_labels = torch.argmax(
                     val_output, dim=1
                 )  # Shape: [batch_size, H, W]
