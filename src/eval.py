@@ -12,7 +12,7 @@ from .satlaspretrain_models.satlaspretrain_models.model import Weights as Satlas
 from .imagenetpretrain_models.model import ImageNetWeights
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--saved_weights", type=str, default="adamw_lr0.001.py")
+argparser.add_argument("--saved_weights", type=str, default="adamw_lr0.0005.py")
 argparser.add_argument("--config_file", type=str, default="adamw_lr0.001.py")
 argparser.add_argument(
     "--disable_wandb", action="store_true", help="Disable wandb for logging"
@@ -89,14 +89,9 @@ wandb.init(
 )
 
 TRAIN_DATA_CONFIG = config.data["train"]["params"]
-if args.split == "geographic":
-    VAL_DATA_CONFIG_FULL = config.data["test"]["full"]["params"]
-    VAL_DATA_CONFIG_URBAN = config.data["test"]["urban"]["params"]
-    VAL_DATA_CONFIG_RURAL = config.data["test"]["rural"]["params"]
-else:
-    raise ValueError(
-        "Invalid split. Only 'geographic' is implemented so far."
-    )
+VAL_DATA_CONFIG_FULL = config.data["test"]["full"]["params"]
+VAL_DATA_CONFIG_URBAN = config.data["test"]["urban"]["params"]
+VAL_DATA_CONFIG_RURAL = config.data["test"]["rural"]["params"]
 
 train_dataloader = LoveDALoader(TRAIN_DATA_CONFIG)
 
