@@ -178,8 +178,20 @@ for id, val_loader in val_dataloaders.items():
             import matplotlib.pyplot as plt
 
             if idx == 1:
+                # min max scaling for visualization
+                val_labels_vis = val_labels[0]
+                val_labels_vis = (val_labels - val_labels.min()) / (
+                    val_labels.max() - val_labels.min()
+                )
+                val_labels_vis = (val_labels_vis * 255).astype(np.uint8)
+                val_labels_vis = np.moveaxis(val_labels_vis, 0, -1)
+                val_labels_vis = np.repeat(val_labels_vis[:, :, np.newaxis], 3, axis=2)
+                val_labels_vis = np.concatenate(
+                    [val_labels_vis, val_labels_vis, val_labels_vis], axis=2
+                )
+                val_labels_vis = np.clip(val_labels_vis, 0, 255).astype(np.uint8)
                 plt.imsave(f"assets/input_{args.split}_{args.saved_weights}_{id}", val_data[0].cpu().numpy().transpose(1, 2, 0))
-                plt.imsave(f"assets/output_{args.split}_{args.saved_weights}_{id}", val_labels[0])
+                plt.imsave(f"assets/output_{args.split}_{args.saved_weights}_{id}", val_labels_vis)
                 plt.imsave(f"assets/target_{args.split}_{args.saved_weights}_{id}", val_target[0])
 
             iou_per_class = []
