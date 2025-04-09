@@ -161,7 +161,7 @@ for id, val_loader in val_dataloaders.items():
     per_class_iou = np.zeros((VAL_DATA_CONFIG_FULL["num_classes"],))
 
     with torch.no_grad():
-        for val_data, val_target in val_loader:
+        for idx, (val_data, val_target) in enumerate(val_loader):
             val_data = val_data.to(device)
             val_target = val_target["cls"].to(device)
             val_output, loss = model(val_data, val_target)
@@ -170,6 +170,17 @@ for id, val_loader in val_dataloaders.items():
             val_labels = torch.argmax(
                 val_output, dim=1
             )  # Shape: [batch_size, H, W]
+
+            val_labels = val_labels.cpu().numpy()
+            val_target = val_target.cpu().numpy()
+
+            # visualize the output
+            import matplotlib.pyplot as plt
+
+            if idx == 1:
+                plt.imsave(f"assets/input_{args.saved_weights}_{id}", val_data[0].cpu().numpy().transpose(1, 2, 0))
+                plt.imsave(f"assets/output_{args.saved_weights}_{id}", val_labels[0])
+                plt.imsave(f"assets/target_{args.saved_weights}_{id}", val_target[0])
 
             iou_per_class = []
             for cls in range(val_output.shape[1]):  # Loop over classes
