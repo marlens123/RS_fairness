@@ -13,7 +13,7 @@ from .imagenetpretrain_models.model import ImageNetWeights
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--saved_weights", type=str, default="adamw_lr0.0005.py")
-argparser.add_argument("--config_file", type=str, default="adamw_lr0.001.py")
+argparser.add_argument("--config_file", type=str, default="adamw_lr0.0005.py")
 argparser.add_argument(
     "--disable_wandb", action="store_true", help="Disable wandb for logging"
 )
@@ -178,9 +178,9 @@ for id, val_loader in val_dataloaders.items():
             import matplotlib.pyplot as plt
 
             if idx == 1:
-                plt.imsave(f"assets/input_{args.saved_weights}_{id}", val_data[0].cpu().numpy().transpose(1, 2, 0))
-                plt.imsave(f"assets/output_{args.saved_weights}_{id}", val_labels[0])
-                plt.imsave(f"assets/target_{args.saved_weights}_{id}", val_target[0])
+                plt.imsave(f"assets/input_{args.split}_{args.saved_weights}_{id}", val_data[0].cpu().numpy().transpose(1, 2, 0))
+                plt.imsave(f"assets/output_{args.split}_{args.saved_weights}_{id}", val_labels[0])
+                plt.imsave(f"assets/target_{args.split}_{args.saved_weights}_{id}", val_target[0])
 
             iou_per_class = []
             for cls in range(val_output.shape[1]):  # Loop over classes
