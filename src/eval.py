@@ -216,9 +216,9 @@ for id, val_loader in val_dataloaders.items():
                 val_target_vis = np.clip(val_target_vis, 0, 255).astype(np.uint8)
 
                 # save the images
-                plt.imsave(f"assets/input_{args.split}_{args.saved_weights}_{id}", val_data_vis)
-                plt.imsave(f"assets/output_{args.split}_{args.saved_weights}_{id}", val_labels_vis)
-                plt.imsave(f"assets/target_{args.split}_{args.saved_weights}_{id}", val_target_vis)
+                plt.imsave(f"assets/input_{args.split}_{args.saved_weights}_{id}.png", val_data_vis)
+                plt.imsave(f"assets/output_{args.split}_{args.saved_weights}_{id}.png", val_labels_vis)
+                plt.imsave(f"assets/target_{args.split}_{args.saved_weights}_{id}.png", val_target_vis)
 
             iou_per_class = []
             for cls in range(val_output.shape[1]):  # Loop over classes
