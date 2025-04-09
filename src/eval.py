@@ -190,9 +190,35 @@ for id, val_loader in val_dataloaders.items():
                     [val_labels_vis, val_labels_vis, val_labels_vis], axis=2
                 )
                 val_labels_vis = np.clip(val_labels_vis, 0, 255).astype(np.uint8)
-                plt.imsave(f"assets/input_{args.split}_{args.saved_weights}_{id}", val_data[0].cpu().numpy().transpose(1, 2, 0))
+                # do the same for val_data
+                val_data_vis = val_data[0].cpu().numpy().transpose(1, 2, 0)
+                val_data_vis = (val_data_vis - val_data_vis.min()) / (
+                    val_data_vis.max() - val_data_vis.min()
+                )
+                val_data_vis = (val_data_vis * 255).astype(np.uint8)
+                val_data_vis = np.clip(val_data_vis, 0, 255).astype(np.uint8)
+                val_data_vis = np.repeat(val_data_vis[:, :, np.newaxis], 3, axis=2)
+                val_data_vis = np.concatenate(
+                    [val_data_vis, val_data_vis, val_data_vis], axis=2
+                )
+                val_data_vis = np.clip(val_data_vis, 0, 255).astype(np.uint8)
+                # do the same for val_target
+                val_target_vis = val_target[0]
+                val_target_vis = (val_target_vis - val_target_vis.min()) / (
+                    val_target_vis.max() - val_target_vis.min()
+                )
+                val_target_vis = (val_target_vis * 255).astype(np.uint8)
+                val_target_vis = np.moveaxis(val_target_vis, 0, -1)
+                val_target_vis = np.repeat(val_target_vis[:, :, np.newaxis], 3, axis=2)
+                val_target_vis = np.concatenate(
+                    [val_target_vis, val_target_vis, val_target_vis], axis=2
+                )
+                val_target_vis = np.clip(val_target_vis, 0, 255).astype(np.uint8)
+
+                # save the images
+                plt.imsave(f"assets/input_{args.split}_{args.saved_weights}_{id}", val_data_vis)
                 plt.imsave(f"assets/output_{args.split}_{args.saved_weights}_{id}", val_labels_vis)
-                plt.imsave(f"assets/target_{args.split}_{args.saved_weights}_{id}", val_target[0])
+                plt.imsave(f"assets/target_{args.split}_{args.saved_weights}_{id}", val_target_vis)
 
             iou_per_class = []
             for cls in range(val_output.shape[1]):  # Loop over classes
