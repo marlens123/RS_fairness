@@ -42,32 +42,88 @@ data = dict(
         ),
     ),
     test=dict(
-        type="LoveDALoader",
-        params=dict(
-            image_dir=[
-                "src/data/loveda/Val/Rural/images_png/",
-                "src/data/loveda/Train/Rural/images_png/",
-            ],
-            mask_dir=[
-                "src/data/loveda/Val/Rural/masks_png/",
-                "src/data/loveda/Train/Rural/masks_png/",
-            ],
-            transforms=Compose(
-                [
-                    Normalize(
-                        mean=(123.675, 116.28, 103.53),
-                        std=(58.395, 57.12, 57.375),
-                        max_pixel_value=1,
-                        always_apply=True,
-                    ),
-                    er.preprocess.albu.ToTensor(),
-                ]
+        full=dict(
+            type="LoveDALoader",
+            params=dict(
+                image_dir=[
+                    "src/data/loveda/Train/Rural/images_png/",
+                    "src/data/loveda/Val/Rural/images_png/",
+                ],
+                mask_dir=[
+                    "src/data/loveda/Train/Rural/masks_png/",
+                    "src/data/loveda/Val/Rural/masks_png/",
+                ],
+                transforms=Compose(
+                    [
+                        Normalize(
+                            mean=(123.675, 116.28, 103.53),
+                            std=(58.395, 57.12, 57.375),
+                            max_pixel_value=1,
+                            always_apply=True,
+                        ),
+                        er.preprocess.albu.ToTensor(),
+                    ]
+                ),
+                CV=dict(k=10, i=-1),
+                training=False,
+                batch_size=4,
+                num_workers=0,
+                num_classes=7,
             ),
-            CV=dict(k=10, i=-1),
-            training=False,
-            batch_size=4,
-            num_workers=0,
-            num_classes=7,
+        ),
+        urban=dict(
+            type="LoveDALoader",
+            params=dict(
+                image_dir=[
+                    "src/data/loveda/Val/Urban/images_png/",
+                ],
+                mask_dir=[
+                    "src/data/loveda/Val/Urban/masks_png/",
+                ],
+                transforms=Compose(
+                    [
+                        Normalize(
+                            mean=(123.675, 116.28, 103.53),
+                            std=(58.395, 57.12, 57.375),
+                            max_pixel_value=1,
+                            always_apply=True,
+                        ),
+                        er.preprocess.albu.ToTensor(),
+                    ]
+                ),
+                CV=dict(k=10, i=-1),
+                training=False,
+                batch_size=4,
+                num_workers=0,
+                num_classes=7,
+            ),
+        ),
+        rural=dict(
+            type="LoveDALoader",
+            params=dict(
+                image_dir=[
+                    "src/data/loveda/Val/Rural/images_png/",
+                ],
+                mask_dir=[
+                    "src/data/loveda/Val/Rural/masks_png/",
+                ],
+                transforms=Compose(
+                    [
+                        Normalize(
+                            mean=(123.675, 116.28, 103.53),
+                            std=(58.395, 57.12, 57.375),
+                            max_pixel_value=1,
+                            always_apply=True,
+                        ),
+                        er.preprocess.albu.ToTensor(),
+                    ]
+                ),
+                CV=dict(k=10, i=-1),
+                training=False,
+                batch_size=4,
+                num_workers=0,
+                num_classes=7,
+            ),            
         ),
     ),
 )
