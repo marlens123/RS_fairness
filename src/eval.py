@@ -238,6 +238,27 @@ for id, val_loader in val_dataloaders.items():
             mean_iou += iou_mean
             per_class_iou += np.array(iou_per_class)
 
+    # store the per-class iou in a csv file, 
+    import pandas as pd
+
+    per_class_iou_df = pd.DataFrame(
+        per_class_iou / len(val_loader), columns=["iou"], index=range(VAL_DATA_CONFIG_FULL["num_classes"])
+    )
+    # add the miou, worst class iou, mean bottom 30% classes, mean top 30% classes to the dataframe
+    per_class_iou_df["val_miou"] = mean_iou / len(val_loader)
+    per_class_iou_df["worst_class_iou"] = np.min(per_class_iou / len(val_loader))
+    per_class_iou_df["mean_bottom_30_percent_classes"] = np.mean(
+        per_class_iou[np.argsort(per_class_iou / len(val_loader))[: int(0.3 * VAL_DATA_CONFIG_FULL["num_classes"])]]
+        / len(val_loader)
+    )
+    per_class_iou_df["mean_top_30_percent_classes"] = np.mean(
+        per_class_iou[np.argsort(per_class_iou / len(val_loader))[-int(0.3 * VAL_DATA_CONFIG_FULL["num_classes"]):]]
+        / len(val_loader)
+    )
+    per_class_iou_df["class_std"] = np.std(per_class_iou / len(val_loader))
+
+    per_class_iou_df.to_csv(f"assets/per_class_iou_{args.split}_{args.saved_weights}_{id}.csv")
+
     # report performance and fairness metrics
     if not args.disable_wandb:
         wandb.log({f"val_loss_{id}": val_loss / len(val_loader)})
