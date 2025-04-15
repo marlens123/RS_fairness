@@ -124,7 +124,7 @@ NUM_EPOCHS = config.train["num_epochs"]
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 val_step = 1  # evaluate every val_step epochs
 
-save_path = "weights/"  # where to save model weights
+save_path = f"{args.split}_weights/"  # where to save model weights
 os.makedirs(save_path, exist_ok=True)
 
 train_dataloader = LoveDALoader(TRAIN_DATA_CONFIG)
