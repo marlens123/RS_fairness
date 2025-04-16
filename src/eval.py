@@ -72,7 +72,7 @@ if torch.cuda.is_available():
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-model_save_path = os.path.join(f"final_weights/{args.saved_weights}")
+model_save_path = os.path.join(f"{args.split}_weights/{args.saved_weights}")
 
 def load_config(config_path):
     """Dynamically load a Python module from a given file path."""
