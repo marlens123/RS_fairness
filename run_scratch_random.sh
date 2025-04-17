@@ -11,4 +11,4 @@ conda activate rs_fairness
 
 export WANDB_API_KEY=d2ca547c9f807e8db70308537f4d7b64b6077b81
 
-python -m src.train --pretraining_dataset "none" --imagenet_model_identifier "swinb" --config_file "sgd_lr0.01.py" --random_seed 11 --split "random"
+python -m src.train --pretraining_dataset "none" --imagenet_model_identifier "swinb" --config_file "sgd_lr0.01.py" --random_seed 15 --split "random"
