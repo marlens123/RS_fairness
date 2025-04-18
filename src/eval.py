@@ -191,9 +191,6 @@ for id, val_loader in val_dataloaders.items():
                 val_labels_vis = (val_labels_vis * 255).astype(np.uint8)
                 val_labels_vis = np.moveaxis(val_labels_vis, 0, -1)
                 val_labels_vis = np.repeat(val_labels_vis[:, :, np.newaxis], 3, axis=2)
-                val_labels_vis = np.concatenate(
-                    [val_labels_vis, val_labels_vis, val_labels_vis], axis=2
-                )
                 val_labels_vis = np.clip(val_labels_vis, 0, 255).astype(np.uint8)
                 # do the same for val_data
                 val_data_vis = val_data[0].cpu().numpy().transpose(1, 2, 0)
@@ -203,9 +200,6 @@ for id, val_loader in val_dataloaders.items():
                 val_data_vis = (val_data_vis * 255).astype(np.uint8)
                 val_data_vis = np.clip(val_data_vis, 0, 255).astype(np.uint8)
                 val_data_vis = np.repeat(val_data_vis[:, :, np.newaxis], 3, axis=2)
-                val_data_vis = np.concatenate(
-                    [val_data_vis, val_data_vis, val_data_vis], axis=2
-                )
                 val_data_vis = np.clip(val_data_vis, 0, 255).astype(np.uint8)
                 # do the same for val_target
                 val_target_vis = val_target[0]
@@ -215,9 +209,6 @@ for id, val_loader in val_dataloaders.items():
                 val_target_vis = (val_target_vis * 255).astype(np.uint8)
                 val_target_vis = np.moveaxis(val_target_vis, 0, -1)
                 val_target_vis = np.repeat(val_target_vis[:, :, np.newaxis], 3, axis=2)
-                val_target_vis = np.concatenate(
-                    [val_target_vis, val_target_vis, val_target_vis], axis=2
-                )
                 val_target_vis = np.clip(val_target_vis, 0, 255).astype(np.uint8)
 
                 if args.visualize:
