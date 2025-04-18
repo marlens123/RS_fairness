@@ -185,37 +185,16 @@ for id, val_loader in val_dataloaders.items():
             if idx == 1:
                 # min max scaling for visualization
                 val_labels_vis = val_labels[0]
-                val_labels_vis = (val_labels - val_labels.min()) / (
-                    val_labels.max() - val_labels.min()
-                )
-                val_labels_vis = (val_labels_vis * 255).astype(np.uint8)
-                val_labels_vis = np.moveaxis(val_labels_vis, 0, -1)
-                val_labels_vis = np.repeat(val_labels_vis[:, :, np.newaxis], 3, axis=2)
-                val_labels_vis = np.clip(val_labels_vis, 0, 255).astype(np.uint8)
                 # do the same for val_data
                 val_data_vis = val_data[0].cpu().numpy().transpose(1, 2, 0)
-                val_data_vis = (val_data_vis - val_data_vis.min()) / (
-                    val_data_vis.max() - val_data_vis.min()
-                )
-                val_data_vis = (val_data_vis * 255).astype(np.uint8)
-                val_data_vis = np.clip(val_data_vis, 0, 255).astype(np.uint8)
-                val_data_vis = np.repeat(val_data_vis[:, :, np.newaxis], 3, axis=2)
-                val_data_vis = np.clip(val_data_vis, 0, 255).astype(np.uint8)
                 # do the same for val_target
                 val_target_vis = val_target[0]
-                val_target_vis = (val_target_vis - val_target_vis.min()) / (
-                    val_target_vis.max() - val_target_vis.min()
-                )
-                val_target_vis = (val_target_vis * 255).astype(np.uint8)
-                val_target_vis = np.moveaxis(val_target_vis, 0, -1)
-                val_target_vis = np.repeat(val_target_vis[:, :, np.newaxis], 3, axis=2)
-                val_target_vis = np.clip(val_target_vis, 0, 255).astype(np.uint8)
 
                 if args.visualize:
                     # save the images
-                    plt.imsave(f"assets/visualizations/input_{args.split}_{args.saved_weights}_{id}.png", val_data_vis)
-                    plt.imsave(f"assets/visualizations/output_{args.split}_{args.saved_weights}_{id}.png", val_labels_vis)
-                    plt.imsave(f"assets/visualizations/target_{args.split}_{args.saved_weights}_{id}.png", val_target_vis)
+                    plt.imsave(f"assets/visualizations/input_{args.split}_{args.saved_weights}_{id}.npy", val_data_vis)
+                    plt.imsave(f"assets/visualizations/output_{args.split}_{args.saved_weights}_{id}.npy", val_labels_vis)
+                    plt.imsave(f"assets/visualizations/target_{args.split}_{args.saved_weights}_{id}.npy", val_target_vis)
 
             iou_per_class = []
             for cls in range(val_output.shape[1]):  # Loop over classes
