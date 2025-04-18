@@ -222,9 +222,9 @@ for id, val_loader in val_dataloaders.items():
 
                 if args.visualize:
                     # save the images
-                    plt.imsave(f"assets/input_{args.split}_{args.saved_weights}_{id}.png", val_data_vis)
-                    plt.imsave(f"assets/output_{args.split}_{args.saved_weights}_{id}.png", val_labels_vis)
-                    plt.imsave(f"assets/target_{args.split}_{args.saved_weights}_{id}.png", val_target_vis)
+                    plt.imsave(f"assets/visualizations/input_{args.split}_{args.saved_weights}_{id}.png", val_data_vis)
+                    plt.imsave(f"assets/visualizations/output_{args.split}_{args.saved_weights}_{id}.png", val_labels_vis)
+                    plt.imsave(f"assets/visualizations/target_{args.split}_{args.saved_weights}_{id}.png", val_target_vis)
 
             iou_per_class = []
             for cls in range(val_output.shape[1]):  # Loop over classes
