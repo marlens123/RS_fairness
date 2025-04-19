@@ -97,6 +97,7 @@ TRAIN_DATA_CONFIG = config.data["train"]["params"]
 VAL_DATA_CONFIG_FULL = config.data["test"]["full"]["params"]
 VAL_DATA_CONFIG_URBAN = config.data["test"]["urban"]["params"]
 VAL_DATA_CONFIG_RURAL = config.data["test"]["rural"]["params"]
+VAL_DATA_CONFIG_VIS = config.data["test"]["vis"]["params"]
 
 train_dataloader = LoveDALoader(TRAIN_DATA_CONFIG)
 
@@ -105,6 +106,9 @@ val_dataloaders = {
     "urban": LoveDALoader(VAL_DATA_CONFIG_URBAN),
     "rural": LoveDALoader(VAL_DATA_CONFIG_RURAL),
 }
+
+# contains one sample image and one sample mask for visualization
+vis_val_dataloader = LoveDALoader(VAL_DATA_CONFIG_VIS)
 
 if args.pretraining_dataset == "Satlas":
     from .satlaspretrain_models.satlaspretrain_models.utils import Head
@@ -159,6 +163,35 @@ model.load_state_dict(
 model.to(device)
 model.eval()
 
+if args.visualize:
+    with torch.no_grad():
+        for idx, (val_data, val_target) in enumerate(vis_val_dataloader):
+            val_data = val_data.to(device)
+            val_target = val_target["cls"].to(device)
+            val_output, loss = model(val_data, val_target)
+
+            val_loss += loss.item()
+            val_labels = torch.argmax(
+                val_output, dim=1
+            )  # Shape: [batch_size, H, W]
+
+            val_labels = val_labels.cpu().numpy()
+            val_target = val_target.cpu().numpy()
+
+            if idx == 1:
+                # min max scaling for visualization
+                val_labels_vis = val_labels[0]
+                # do the same for val_data
+                val_data_vis = val_data[0].cpu().numpy()
+                # do the same for val_target
+                val_target_vis = val_target[0]
+
+                # save the images
+                np.save(f"assets/visualizations/input_{args.split}_{args.saved_weights}.npy", val_data_vis)
+                np.save(f"assets/visualizations/output_{args.split}_{args.saved_weights}.npy", val_labels_vis)
+                np.save(f"assets/visualizations/target_{args.split}_{args.saved_weights}.npy", val_target_vis)
+
+
 for id, val_loader in val_dataloaders.items():
     val_loss = 0
     jac_m = 0
@@ -178,23 +211,6 @@ for id, val_loader in val_dataloaders.items():
 
             val_labels = val_labels.cpu().numpy()
             val_target = val_target.cpu().numpy()
-
-            # visualize the output
-            import matplotlib.pyplot as plt
-
-            if idx == 1:
-                # min max scaling for visualization
-                val_labels_vis = val_labels[0]
-                # do the same for val_data
-                val_data_vis = val_data[0].cpu().numpy().transpose(1, 2, 0)
-                # do the same for val_target
-                val_target_vis = val_target[0]
-
-                if args.visualize:
-                    # save the images
-                    np.save(f"assets/visualizations/input_{args.split}_{args.saved_weights}_{id}.npy", val_data_vis)
-                    np.save(f"assets/visualizations/output_{args.split}_{args.saved_weights}_{id}.npy", val_labels_vis)
-                    np.save(f"assets/visualizations/target_{args.split}_{args.saved_weights}_{id}.npy", val_target_vis)
 
             iou_per_class = []
             for cls in range(val_output.shape[1]):  # Loop over classes
