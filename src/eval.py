@@ -170,7 +170,6 @@ if args.visualize:
             val_target = val_target["cls"].to(device)
             val_output, loss = model(val_data, val_target)
 
-            val_loss += loss.item()
             val_labels = torch.argmax(
                 val_output, dim=1
             )  # Shape: [batch_size, H, W]
