@@ -9,6 +9,9 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from tqdm import tqdm
+from torch.utils.data import Dataset
+from PIL import Image
+import os
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument(
@@ -34,12 +37,10 @@ target_path = f"src/data/loveda/All/{args.target_data}/images_png/"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# 1. Define feature extractor
 resnet = models.resnet50(pretrained=True)
 resnet.fc = torch.nn.Identity()
 resnet.eval().to(device)
 
-# 2. Define transformation (consistent for both sets)
 transform = transforms.Compose([
     transforms.Resize((512, 512)),
     transforms.ToTensor(),
@@ -47,8 +48,28 @@ transform = transforms.Compose([
                          std=[0.229, 0.224, 0.225]),
 ])
 
-source_dataset = ImageFolder(source_path, transform=transform)
-target_dataset = ImageFolder(target_path, transform=transform)
+# a quick dataset class
+class CostumImageDataset(Dataset):
+    def __init__(self, image_dir, transform=None):
+        self.image_dir = image_dir
+        self.image_paths = [
+            os.path.join(image_dir, fname)
+            for fname in os.listdir(image_dir)
+            if fname.lower().endswith((".png", ".jpg", ".jpeg", ".tif"))
+        ]
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        image = Image.open(self.image_paths[idx]).convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+        return image
+
+source_dataset = CostumImageDataset(source_path, transform=transform)
+target_dataset = CostumImageDataset(target_path, transform=transform)
 
 source_loader = DataLoader(source_dataset, batch_size=32, shuffle=False)
 target_loader = DataLoader(target_dataset, batch_size=32, shuffle=False)
