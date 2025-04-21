@@ -24,7 +24,7 @@ argparser.add_argument(
     "--target_data",
     type=str,
     choices=["Full", "Urban", "Rural"],
-    default="full",
+    default="Full",
 )
 argparser.add_argument(
     "--random_seed", type=int, default=5, help="Random seed for reproducibility."
@@ -32,7 +32,7 @@ argparser.add_argument(
 
 args = argparser.parse_args()
 
-source_path = f"src/data/satlas/{args.source_data}/{args.source_data}_small/"
+source_path = f"src/data/satlas/{args.source_data}/{args.source_data}_small/all_images/"
 target_path = f"src/data/loveda/All/{args.target_data}/images_png/"
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -78,8 +78,8 @@ target_loader = DataLoader(target_dataset, batch_size=32, shuffle=False)
 def extract_features(dataloader):
     feats = []
     with torch.no_grad():
-        for x, _ in tqdm(dataloader):
-            x = x.cuda()
+        for x in tqdm(dataloader):
+            x = x.to(device)
             f = resnet(x)
             feats.append(f.cpu())
     return torch.cat(feats)
