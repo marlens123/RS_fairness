@@ -12,7 +12,6 @@ from torchvision.datasets import ImageFolder
 from tqdm import tqdm
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--config_file", type=str, default="adamw_lr0.001.py")
 argparser.add_argument(
     "--source_data",
     type=str,
@@ -92,7 +91,7 @@ def compute_mmd(x, y, kernel='rbf', sigma=1.0):
     return (kxx.sum() - m) / (m * (m - 1)) + (kyy.sum() - n) / (n * (n - 1)) - 2 * kxy.mean()
 
 mmd_score = compute_mmd(features_source, features_target)
-print("MMD (RBF) between source and target feature distributions:", mmd_score.item())
+print(f"MMD (RBF) between {args.source_data} and {args.target_data} feature distributions:", mmd_score.item(), flush=True)
 
 
 
