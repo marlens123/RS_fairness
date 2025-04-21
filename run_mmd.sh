@@ -9,9 +9,9 @@ module load anaconda/3
 
 conda activate rs_fairness
 
-python -m src.compute_similarity --source_data "naip" --target_data "full"
-python -m src.compute_similarity --source_data "naip" --target_data "rural"
-python -m src.compute_similarity --source_data "naip" --target_data "urban"
-python -m src.compute_similarity --source_data "sentinel2" --target_data "full"
-python -m src.compute_similarity --source_data "sentinel2" --target_data "rural"
-python -m src.compute_similarity --source_data "sentinel2" --target_data "urban"
+python -m src.compute_similarity --source_data "naip" --target_data "Full"
+python -m src.compute_similarity --source_data "naip" --target_data "Rural"
+python -m src.compute_similarity --source_data "naip" --target_data "Urban"
+python -m src.compute_similarity --source_data "sentinel2" --target_data "Full"
+python -m src.compute_similarity --source_data "sentinel2" --target_data "Rural"
+python -m src.compute_similarity --source_data "sentinel2" --target_data "Urban"
