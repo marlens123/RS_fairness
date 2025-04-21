@@ -1,7 +1,6 @@
 from torch import nn
 import torch
 import torch.nn.functional as F
-from .utils.mmd import compute_mmd
 import argparse
 import torch
 from torchvision import models, transforms
@@ -93,60 +92,3 @@ def compute_mmd(x, y, kernel='rbf', sigma=1.0):
 mmd_score = compute_mmd(features_source, features_target)
 print(f"MMD (RBF) between {args.source_data} and {args.target_data} feature distributions:", mmd_score.item(), flush=True)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-optimizer = torch.optim.Adam(list(feature_extractor.parameters()) + list(classifier.parameters()), lr=1e-3)
-NUM_EPOCHS = 100
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-feature_extractor.to(device)
-classifier.to(device)
-
-lambda_mmd = 0.5  # weight of MMD loss
-
-for epoch in range(NUM_EPOCHS):
-    for (x_src, y_src), (x_tgt, _) in zip(source_loader, target_loader):
-        x_src, y_src = x_src.to(device), y_src.to(device)
-        x_tgt = x_tgt.to(device)
-
-        # Forward pass
-        feat_src = feature_extractor(x_src)
-        feat_tgt = feature_extractor(x_tgt)
-
-        preds_src = classifier(feat_src)
-
-        # Losses
-        task_loss = F.cross_entropy(preds_src, y_src)
-        mmd_loss = compute_mmd(feat_src, feat_tgt)
-
-        total_loss = task_loss + lambda_mmd * mmd_loss
-
-        optimizer.zero_grad()
-        total_loss.backward()
-        optimizer.step()
-
-    print(f"Epoch {epoch}: task_loss = {task_loss.item():.4f}, mmd_loss = {mmd_loss.item():.4f}")
