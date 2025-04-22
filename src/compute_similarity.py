@@ -87,7 +87,6 @@ def extract_features(dataloader):
 features_source = extract_features(source_loader)
 features_target = extract_features(target_loader)
 
-# 5. Compute MMD
 def compute_mmd(x, y, kernel='rbf', sigma=1.0):
     """Unbiased MMD^2 (squared) using RBF kernel"""
     xx = torch.mm(x, x.t())
@@ -110,6 +109,16 @@ def compute_mmd(x, y, kernel='rbf', sigma=1.0):
 
     return (kxx.sum() - m) / (m * (m - 1)) + (kyy.sum() - n) / (n * (n - 1)) - 2 * kxy.mean()
 
-mmd_score = compute_mmd(features_source, features_target)
+def subsample(tensor, max_samples=5000):
+    if len(tensor) > max_samples:
+        indices = torch.randperm(len(tensor))[:max_samples]
+        return tensor[indices]
+    return tensor
+
+features_source_sub = subsample(features_source, max_samples=5000)
+features_target_sub = subsample(features_target, max_samples=5000)
+
+mmd_score = compute_mmd(features_source_sub, features_target_sub)
+
 print(f"MMD (RBF) between {args.source_data} and {args.target_data} feature distributions:", mmd_score.item(), flush=True)
 
