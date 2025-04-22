@@ -71,7 +71,7 @@ class CostumImageDataset(Dataset):
 source_dataset = CostumImageDataset(source_path, transform=transform)
 target_dataset = CostumImageDataset(target_path, transform=transform)
 
-source_loader = DataLoader(source_dataset, batch_size=32, shuffle=False)
+source_loader = DataLoader(source_dataset, batch_size=128, shuffle=False)
 target_loader = DataLoader(target_dataset, batch_size=32, shuffle=False)
 
 # 4. Extract features

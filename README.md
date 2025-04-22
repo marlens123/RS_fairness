@@ -2,84 +2,31 @@
 
 ## Description
 
-Final class project Rsponsible AI course.
+This codebase investigates the influence of the pre-training dataset on fairness in remote sensing land cover segmentation. The pre-training datasets used are: ImageNet-1K, Satlas Sentinel-2, and Satlas Aerial (NAIP). We evaluate performance across rural and urban subgroups of the LoveDA dataset and compute mean maximum disrepancy (MMD) between the pre-training and evaluation datasets.
 
-(TODO: Credit SatlasPretrain and LoveDA)
+The project was conducted as final class project of the McGill course COMP-598-001 in the winter semester 2025.
 
-Note:
 
-This repository contains a submodule (forked satlaspretrain-models repo). To properly initiate the submodule run the following:
+## Credits
+This codebase inherits code from satlas, licenced under Apache 2.0, and loveda, licensed under ....
 
-´git submodule update --init --recursive´
+The template of this project is based on RolnickLab/ Francis Pelletier, licenced under MIT.
 
-Note: Since we are using git submodules, instead of simply pulling from the main repo, we also always have to update the submodule, in this order:
+The project builds on work by Zhang et al.
 
-´git pull origin main´
-´git submodule update --init --recursive´
+We thank all original authors for their contribution.
+
+We also like to thank the prof and TA's for their helpful comments.
 
 
 ## Initialization
 
-Please follow these steps:
+## Note
 
-1. Setup the repository:
-   * Automatic way - On the [template's github page](https://github.com/RolnickLab/lab-basic-template), 
-     create a new repository by using the `Use this template` button, near the top right corner. 
-     Do not include all branches.
-     * If you already have existing code, transfer it either in [src/](src/) or [scripts/](scripts/), 
-       depending on it's nature
-       * Modules (python code that is meant to be _imported_ in other python files) should go into the 
-         [src folder](src/README.md)
-       * Python scripts that are meant to be executed via the command line
-         should go into the [scripts folder](scripts/README.md)
+This repository contains a submodule (satlaspretrain-models). To properly initiate the submodule run the following command:
 
-   * It can also be done manually (though longer and more error prone):
-      1. Clone or download the `lab-basic-template` repository (this repository)
-      2. Either start a new GitHub repository, or select an existing one (the target repository)
-      3. Copy the files and folders of the `lab-basic-template` repository into your target repository.
-         * Do not copy the `.git` folder from the `lab-basic-template`.
-         * Move your existing code
-           * Modules (python code that is meant to be _imported_ in other python files) should go into the 
-             [src folder](src/README.md)
-           * Python scripts that are meant to be executed via the command line
-             should go into the [scripts folder](scripts/README.md)
+´git submodule update --init --recursive´
 
-
-2. Rename the python package (optional step) - This will allow you to use `from <package_name> import ...` 
-   instead of `from src import ...`  :
-   1. Rename [src folder](src) to your package name
-      * Make sure the name is in `snake_case`, like other python modules and packages.
-      * Bad examples : `my-package`, `MyPackage`, `My Package`
-      * Good example : `my_package`
-   2. Set the package name on line #2 of the [pyproject.toml](pyproject.toml) file by replacing `src` with the 
-      same package name used above.
-   3. Rename `src/` to your `<package_name>` on line #13 and #18 of the [nox configuration file](noxfile.py)
-3. Write your name on line #5 and write a short description on line #4 in [pyproject.toml](pyproject.toml)
-4. Follow the rest of the instructions in this README
-5. Remove this section (_Initialization_) from the README of your target repository and modify it's title 
-   and description
-
-**Important note**
-If you are planning to use this for a new project and expect to use the DRAC cluster 
-as well as other clusters/locations, it is recommended to first set up your environment 
-on DRAC, as the versions of Python libraries are often a bit behind compared to the Mila 
-cluster.
-
-This will make your project more portable and will prevent many dependency management 
-problems while working across different clusters.
-
-Installing this module for the first time (see [Installation](#installation)) 
-will create the `poetry.lock` file, which will set the different library versions used 
-by the project, and therefore help with reproducibility and reduce the classic but 
-annoying "but it works on my machine" situation.
-
-However, this `poetry.lock` file can be problematic when using locally compiled python 
-wheels, [like is recommended in their documentation](#drac-specific-install-directives).
-
-If working on multiple different clusters, it might be better to add the `poetry.lock` 
-file to your `.gitignore`, and manage your dependencies with either explicit versions or 
-with [Tilde requirements](https://python-poetry.org/docs/dependency-specification/#tilde-requirements).
- 
 ## Python Version
 
 This project uses Python version 3.10 and up.
@@ -176,7 +123,6 @@ documentation to help you determine what is best for you.
   * Do not skip the [Cluster recommendations with Poetry](poetry_installation.md#considerations-when-using-poetry-in-a-compute-cluster-environment)
     if developing directly on a compute cluster.
 
-
 ### Installation
 
 Once the virtual environment is built and `poetry` is installed, follow these steps to 
@@ -188,25 +134,6 @@ install the package's dependencies:
     * Alternatively, you can also install using `pip install -e .`, which will install 
       your package, [configured scripts](https://python-poetry.org/docs/pyproject#scripts) 
       and dependencies, but without creating a `poetry.lock` file.
-
-#### DRAC Specific Install Directives
-
-This is in accordance with the official [DRAC documentation](https://docs.alliancecan.ca/wiki/Python#Creating_and_using_a_virtual_environment), 
-adapted for use with `poetry`.
-
-It is common practice, though not enforced, to re-create your Python environment inside 
-your job. Since most nodes on the DRAC cluster do not have access to the internet, the 
-dependencies are therefore installed from pre-built wheels. If this does not apply to 
-you, or if you work on Cedar, which nodes do have access to the internet, you can 
-disregard the following.
-
-To install the dependencies from these wheels, use the following steps:
-
-1. Create your environment like specified in [environment_creation_drac.md](docs/environment_creation_drac.md)
-2. Instead of using `poetry install`, use `pip install -e . --no-index`
-   * This will install the package, [configured scripts](https://python-poetry.org/docs/pyproject#scripts) 
-     as well as the dependencies. However, `pip` can only install main dependencies and 
-     will not be able to install `poetry` defined groups
 
 ### Development
 
@@ -243,5 +170,3 @@ If you want to contribute to this repository, the development dependencies will 
    * To keep things simple, it is recommended to store all new dependencies as main 
      dependencies, unless you are already familiar with dependency management. 
 4. Read and follow the [Contributing guidelines](CONTRIBUTING.md)
-
-
