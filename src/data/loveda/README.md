@@ -6,3 +6,7 @@ You can do so, for example, by running:
 ```unzip files-archive```
 
 (after this, ```unzip Train.zip Val.zip Test.zip```).
+
+The extracted images in the folders `Train` and `Val` can be used to evaluate geographic transfer.
+
+To be able to evaluate random split mode, redistribute the data using the ```train_val_split.py```.
