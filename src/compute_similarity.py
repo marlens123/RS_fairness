@@ -71,7 +71,7 @@ class CostumImageDataset(Dataset):
 source_dataset = CostumImageDataset(source_path, transform=transform)
 target_dataset = CostumImageDataset(target_path, transform=transform)
 
-source_loader = DataLoader(source_dataset, batch_size=32, shuffle=False)
+source_loader = DataLoader(source_dataset, batch_size=128, shuffle=False)
 target_loader = DataLoader(target_dataset, batch_size=32, shuffle=False)
 
 # 4. Extract features
@@ -87,29 +87,37 @@ def extract_features(dataloader):
 features_source = extract_features(source_loader)
 features_target = extract_features(target_loader)
 
-# 5. Compute MMD
-def compute_mmd(x, y, kernel='rbf', sigma=1.0):
-    """Unbiased MMD^2 (squared) using RBF kernel"""
+def compute_mmd(x, y, sigma=1.0):
+    """Unbiased MMD^2 using RBF kernel"""
+    m, n = x.size(0), y.size(0)
+
     xx = torch.mm(x, x.t())
     yy = torch.mm(y, y.t())
     xy = torch.mm(x, y.t())
-    
-    rx = (xx.diag().unsqueeze(0).expand_as(xx))
-    ry = (yy.diag().unsqueeze(0).expand_as(yy))
-    
-    dxx = rx.t() + rx - 2 * xx
-    dyy = ry.t() + ry - 2 * yy
-    dxy = rx.t() + ry - 2 * xy
+
+    rx = x.pow(2).sum(1).unsqueeze(1)
+    ry = y.pow(2).sum(1).unsqueeze(1)
+
+    dxx = rx + rx.t() - 2 * xx
+    dyy = ry + ry.t() - 2 * yy
+    dxy = rx + ry.t() - 2 * xy
 
     kxx = torch.exp(-dxx / (2 * sigma ** 2))
     kyy = torch.exp(-dyy / (2 * sigma ** 2))
     kxy = torch.exp(-dxy / (2 * sigma ** 2))
 
-    m = x.size(0)
-    n = y.size(0)
-
     return (kxx.sum() - m) / (m * (m - 1)) + (kyy.sum() - n) / (n * (n - 1)) - 2 * kxy.mean()
 
-mmd_score = compute_mmd(features_source, features_target)
+def subsample(tensor, max_samples=5000):
+    if len(tensor) > max_samples:
+        indices = torch.randperm(len(tensor))[:max_samples]
+        return tensor[indices]
+    return tensor
+
+features_source_sub = subsample(features_source, max_samples=5000)
+features_target_sub = subsample(features_target, max_samples=5000)
+
+mmd_score = compute_mmd(features_source_sub, features_target_sub)
+
 print(f"MMD (RBF) between {args.source_data} and {args.target_data} feature distributions:", mmd_score.item(), flush=True)
 
