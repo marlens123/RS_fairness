@@ -8,15 +8,40 @@ The project was conducted as final class project of the McGill course COMP-598-0
 
 
 ## Credits
-This codebase inherits code from satlas, licenced under Apache 2.0, and loveda, licensed under ....
+This codebase builds upon and integrates components from the following projects:
 
-The template of this project is based on RolnickLab/ Francis Pelletier, licenced under MIT.
+- [Satlas](https://github.com/allenai/satlaspretrain_models)
 
-The project builds on work by Zhang et al.
+- [LoveDA](https://github.com/Junjue-Wang/LoveDA?tab=readme-ov-file)
 
-We thank all original authors for their contribution.
+```
+    @inproceedings{NEURIPS DATASETS AND BENCHMARKS2021_4e732ced,
+         author = {Wang, Junjue and Zheng, Zhuo and Ma, Ailong and Lu, Xiaoyan and Zhong, Yanfei},
+         booktitle = {Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks},
+         editor = {J. Vanschoren and S. Yeung},
+         pages = {},
+         publisher = {Curran Associates, Inc.},
+         title = {LoveDA: A Remote Sensing Land-Cover Dataset for Domain Adaptive Semantic Segmentation},
+         url = {https://datasets-benchmarks-proceedings.neurips.cc/paper_files/paper/2021/file/4e732ced3463d06de0ca9a15b6153677-Paper-round2.pdf},
+         volume = {1},
+         year = {2021}
+    }
+    @dataset{junjue_wang_2021_5706578,
+        author={Junjue Wang and Zhuo Zheng and Ailong Ma and Xiaoyan Lu and Yanfei Zhong},
+        title={Love{DA}: A Remote Sensing Land-Cover Dataset for Domain Adaptive Semantic Segmentation},
+        month=oct,
+        year=2021,
+        publisher={Zenodo},
+        doi={10.5281/zenodo.5706578},
+        url={https://doi.org/10.5281/zenodo.5706578}
+    }
+```
 
-We also like to thank the prof and TA's for their helpful comments.
+The project template is adapted from work by [Francis Pelletier / Rolnick Lab](https://github.com/RolnickLab).
+The evaluation framework draws on methods developed by [Zhang et al. (2022)](https://openaccess.thecvf.com/content/CVPR2022W/FaDE-TCV/papers/Zhang_Segmenting_Across_Places_The_Need_for_Fair_Transfer_Learning_With_CVPRW_2022_paper.pdf).
+
+We sincerely thank all original authors for making their work publicly available.
+We also gratefully acknowledge the valuable feedback and support from our professor and TAs throughout the project.
 
 
 ## Initialization
@@ -135,38 +160,8 @@ install the package's dependencies:
       your package, [configured scripts](https://python-poetry.org/docs/pyproject#scripts) 
       and dependencies, but without creating a `poetry.lock` file.
 
-### Development
+### Run Experiments
 
-If you want to contribute to this repository, the development dependencies will also need to added.
+To run the transfer learning experiments, adjust the respective shell scripts to your compute environment and excute them.
 
-1. Install `pre-commit` and other dev dependencies using the following command:
-   * `poetry install --with dev`
-     * `pre-commit` is used for code quality and code analysis
-   * Configure `pre-commit` by running the following command: `pre-commit install`
-   * To use manually on the project:
-     * `nox`
-     * `pre-commit run --all-files`
-2. Optional Checks and Fixes with [Nox](https://nox.thea.codes/en/stable/)
-   1. Pylint
-      * While not enforced by the pre-commit tool, running Pylint on your code can help
-        with code quality, readability and even catch errors or bad coding practices.
-      * To run this tool : `nox -s pylint`
-      * For more information, see the [Pylint library](https://pylint.readthedocs.io/en/stable/)
-   2. Cyclomatic Complexity check (McCabe)
-      * While not enforced by the pre-commit tool, running a complexity check on your code can help
-        with code quality, readability and even catch errors or bad coding practices.
-      * To run this tool : `nox -s complexity`
-      * For more information, see [McCabe Checker](https://github.com/PyCQA/mccabe)
-   3. Other `nox` options on the code base (use `nox -s <option>`)
-      * `check` Runs all checks on the code base without modifying the code
-      * `fix` : Runs the black, isort, docformatter and flynt tools on the code base
-      * `flake8` : Runs the `flake8` linter
-      * `black` : Runs the code formatter
-      * `isort` : Runs the import sorter
-      * `flynt` : Runs the `f-string formatter
-      * `docformatter` : Runs the docstring formatter 
-      * `test` : Runs tests found in the `tests/` folder with `pytest`
-3. Python library dependencies
-   * To keep things simple, it is recommended to store all new dependencies as main 
-     dependencies, unless you are already familiar with dependency management. 
-4. Read and follow the [Contributing guidelines](CONTRIBUTING.md)
+For example, run ```run_aerial_eval.sh``` to evaluate all LoveDA with an aerial-US-pre-trained model, or ```run_mmd.sh``` to compute mean maximum disrepancy between the aerial-US pre-training set and the LoveDA subsets.
