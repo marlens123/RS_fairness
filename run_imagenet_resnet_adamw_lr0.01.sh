@@ -9,6 +9,4 @@ module load anaconda/3
 
 conda activate rs_fairness
 
-export WANDB_API_KEY=d2ca547c9f807e8db70308537f4d7b64b6077b81
-
 python -m src.train --pretraining_dataset "ImageNet" --imagenet_model_identifier "resnet50" --config_file "adamw_lr0.01.py"
