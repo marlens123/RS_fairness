@@ -1,3 +1,5 @@
+# Copyright (c) 2021 Wang et al.
+
 import warnings
 
 warnings.filterwarnings("ignore")
