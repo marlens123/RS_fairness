@@ -6,6 +6,9 @@ This codebase investigates the influence of the pre-training dataset on fairness
 
 The project was conducted as final class project of the McGill course COMP-598-001 in the winter semester 2025.
 
+![image](https://github.com/user-attachments/assets/a0aa04ec-d3ab-4f1b-8e23-3da12c83f1da)
+Evaluation image of a model being pre-trained on Aerial US (NAIP) imagery and finetuned on LoveDA.
+
 
 ## Credits
 This codebase builds upon and integrates components from the following projects:
@@ -41,7 +44,7 @@ The project template is adapted from work by [Francis Pelletier / Rolnick Lab](h
 The evaluation framework draws on methods developed by [Zhang et al. (2022)](https://openaccess.thecvf.com/content/CVPR2022W/FaDE-TCV/papers/Zhang_Segmenting_Across_Places_The_Need_for_Fair_Transfer_Learning_With_CVPRW_2022_paper.pdf).
 
 We sincerely thank all original authors for making their work publicly available.
-We also gratefully acknowledge the valuable feedback and support from our professor and TAs throughout the project.
+We also gratefully acknowledge the valuable feedback from our professor and TAs throughout the project.
 
 
 ## Initialization
